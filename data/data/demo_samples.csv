@@ -1,0 +1,6 @@
+sample_name,ph,tds,temperature,expected_demo_screening
+Fresh sample A,6.66,305,27,NORMAL
+Fresh sample B,6.48,345,30,NORMAL
+Acidic reading demo,5.55,320,28,SUSPICIOUS
+High conductivity demo,6.61,560,28,SUSPICIOUS
+Warm handling demo,6.68,315,48,SUSPICIOUS
