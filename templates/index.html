@@ -276,17 +276,17 @@
           <span class="eyebrow" style="color:#2b7a54; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Live Sensor Data</span>
           <h2 style="font-size:1.4rem; font-weight:700; color:#1a2b21; margin:2px 0 0 0;">Milk Readings</h2>
         </div>
-        <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px;">Auto refresh: 5 sec</span>
+        <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px;">Auto refresh: 20 sec</span>
       </div>
       
       <p class="small" style="color:#6d7f74; font-size:0.85rem; margin-bottom:14px;">
         ESP32 readings appear automatically. Enter parameters manually or use quick test presets:
       </p>
 
-      <!-- Updated Quick Presets -->
+      <!-- Quick Presets -->
       <div class="quick-presets">
         <span class="preset-label">Quick Presets:</span>
-        <button type="button" class="chip" onclick="loadPreset(6.65, 310, 26.5, 'SAMPLE-NORMAL')">✔ Normal Pure Milk</button>
+        <button type="button" class="chip" onclick="loadPreset(6.65, 310, 26.5, 'SAMPLE-NORMAL')">✔ Pure Milk</button>
         <button type="button" class="chip" onclick="loadPreset(8.40, 680, 27.0, 'DEFECT-DETERGENT')">✖ Detergent</button>
         <button type="button" class="chip" onclick="loadPreset(5.80, 420, 28.0, 'DEFECT-CURD')">✖ Curd</button>
         <button type="button" class="chip" onclick="loadPreset(6.60, 140, 25.0, 'DEFECT-DILUTED-WATER')">✖ Diluted Water</button>
@@ -389,6 +389,7 @@
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
+    // Quick Presets Filler
     function loadPreset(ph, tds, temp, id) {
       document.getElementById("ph").value = ph;
       document.getElementById("tds").value = tds;
@@ -396,6 +397,21 @@
       document.getElementById("sample-id").value = id;
     }
 
+    // 20-Second Polling for ESP32 readings
+    async function fetchLatestData() {
+      try {
+        const res = await fetch('/latest');
+        const data = await res.json();
+        if (data && typeof updateDashboard === 'function') {
+          updateDashboard(data);
+        }
+      } catch (err) {
+        // Retry silently on next cycle
+      }
+    }
+    setInterval(fetchLatestData, 20000);
+
+    // Download QR logic
     async function downloadQRCode() {
       const qrImg = document.getElementById("qr-image");
       if (!qrImg || qrImg.style.display === "none" || !qrImg.src) {
