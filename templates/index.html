@@ -454,6 +454,7 @@
       const phInput = document.getElementById("ph");
       const tdsInput = document.getElementById("tds");
       const tempInput = document.getElementById("temperature");
+      const sampleIdInput = document.getElementById("sample-id");
 
       const phTag = document.getElementById("ph-tag");
       const tdsTag = document.getElementById("tds-tag");
@@ -462,6 +463,7 @@
       resetRangeTags();
 
       if (type === 'pure') {
+        sampleIdInput.value = "Pure Milk";
         phInput.value = 6.65;
         tdsInput.value = 310;
         tempInput.value = 26.5;
@@ -471,6 +473,7 @@
         tempTag.innerText = "Safe (\u2264 30\u00B0C)";
       } 
       else if (type === 'curd') {
+        sampleIdInput.value = "Curd";
         phInput.value = 5.80;
         tdsInput.value = 420;
         tempInput.value = 28.0;
@@ -479,6 +482,7 @@
         phTag.className = "range-tag tag-alert";
       } 
       else if (type === 'diluted') {
+        sampleIdInput.value = "Diluted Water";
         phInput.value = 6.60;
         tdsInput.value = 140;
         tempInput.value = 25.0;
