@@ -60,24 +60,30 @@
       color: #1e6b47;
     }
 
-    /* Fixed 2x2 Grid Layout */
+    #reading-form {
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+    }
+
     .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 20px;
-      width: 100%;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 16px !important;
+      width: 100% !important;
+      margin-bottom: 18px !important;
     }
     @media (max-width: 600px) {
       .form-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
       }
     }
 
     .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+      width: 100% !important;
     }
     .field-label {
       font-size: 0.82rem;
@@ -114,6 +120,8 @@
       border: 1.5px solid #dce5df;
       border-radius: 8px;
       padding: 7px 12px;
+      width: 100%;
+      box-sizing: border-box;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .custom-input:focus-within {
@@ -122,13 +130,15 @@
       box-shadow: 0 0 0 3px rgba(43, 122, 84, 0.12);
     }
     .custom-input input {
-      border: none;
-      background: transparent;
-      width: 100%;
-      outline: none;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #213328;
+      border: none !important;
+      background: transparent !important;
+      width: 100% !important;
+      outline: none !important;
+      font-size: 0.95rem !important;
+      font-weight: 600 !important;
+      color: #213328 !important;
+      padding: 0 !important;
+      margin: 0 !important;
     }
     .input-badge {
       font-size: 0.8rem;
@@ -139,51 +149,54 @@
     .badge-left { margin-right: 8px; }
     .badge-right { margin-left: 8px; }
 
-    /* Bottom Button Bar */
     .form-buttons {
-      display: flex;
-      gap: 12px;
-      width: 100%;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 12px !important;
+      width: 100% !important;
+      box-sizing: border-box;
     }
     .btn-submit {
-      flex: 3;
-      background: #1e6b47;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      flex: 3 !important;
+      background: #1e6b47 !important;
+      color: #ffffff !important;
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 12px !important;
+      font-size: 0.95rem !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      height: 48px !important;
       transition: background-color 0.2s;
     }
     .btn-submit:hover {
-      background: #165436;
+      background: #165436 !important;
     }
     .btn-reset {
-      flex: 1;
-      background: #f1f5f3;
-      color: #495e52;
-      border: 1px solid #d2ded7;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 0.92rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      flex: 1 !important;
+      background: #f1f5f3 !important;
+      color: #495e52 !important;
+      border: 1px solid #d2ded7 !important;
+      border-radius: 8px !important;
+      padding: 12px !important;
+      font-size: 0.92rem !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      height: 48px !important;
       transition: all 0.15s ease;
     }
     .btn-reset:hover {
-      background: #e2ede7;
-      border-color: #bccdc3;
-      color: #1f3629;
+      background: #e2ede7 !important;
+      border-color: #bccdc3 !important;
+      color: #1f3629 !important;
     }
 
     .qr-actions {
