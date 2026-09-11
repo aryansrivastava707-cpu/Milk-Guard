@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MilkGuard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="logo">MG</div>
+      <div><h1>MilkGuard</h1><p>Smart Milk Quality Screening System</p></div>
+      <span class="live-dot">● LIVE</span>
+    </header>
+
+    <section class="intro">
+      <span>🥛</span><div><strong>Sensor-based quality check</strong><br><small>pH, TDS and temperature are analysed together.</small></div>
+    </section>
+
+    <section class="card reading-card">
+      <div class="section-title"><div><span class="eyebrow">LIVE SENSOR DATA</span><h2>Milk Readings</h2></div><span class="auto">Auto refresh: 5 sec</span></div>
+      <p class="small">ESP32 readings appear automatically. These fields can also be used for a manual test.</p>
+      <form id="reading-form">
+        <label><span>pH Level</span><div class="input-wrap"><b>pH</b><input id="ph" type="number" step="0.01" min="0" max="14" value="6.65" required></div></label>
+        <label><span>TDS / Conductivity</span><div class="input-wrap"><input id="tds" type="number" step="1" min="0" value="310" required><b>ppm</b></div></label>
+        <label><span>Temperature</span><div class="input-wrap"><input id="temperature" type="number" step="0.1" value="27" required><b>°C</b></div></label>
+        <button type="submit"><span>Analyze Manually</span> →</button>
+      </form>
+    </section>
+
+    <section id="result" class="card result-card hidden" aria-live="polite">
+      <span class="eyebrow">SCREENING RESULT</span><h2 id="status"></h2><p id="probability" class="small"></p>
+      <p class="result-note">Based on the current pH, TDS and temperature readings.</p>
+    </section>
+    <section class="card history-card"><div class="section-title"><div><span class="eyebrow">LOG</span><h2>Recent Tests</h2></div></div><div id="history">No tests yet.</div></section>
+    <p class="notice"><b>Prototype only:</b> this screening output does not identify a specific adulterant or replace laboratory testing.</p>
+    <footer>MilkGuard Mini Project · ESP32 + Flask + Machine Learning</footer>
+  </main>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
