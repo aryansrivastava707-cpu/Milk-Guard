@@ -1,5 +1,7 @@
+# Flexible versions allow Render's current Python runtime to use compatible wheels.
 Flask>=3.1,<4
 scikit-learn>=1.9,<2
 pandas>=3.0,<4
 joblib>=1.6,<2
 gunicorn>=23,<24
+supabase>=2.0,<3
