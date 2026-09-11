@@ -6,7 +6,6 @@
   <title>MilkGuard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    /* Manual Input Section */
     .reading-card {
       background: #ffffff;
       border-radius: 12px;
@@ -32,7 +31,6 @@
       margin-left: 6px;
     }
 
-    /* Quick Preset Chips */
     .quick-presets {
       display: flex;
       align-items: center;
@@ -62,7 +60,6 @@
       color: #1e6b47;
     }
 
-    /* 2x2 Form Grid */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -85,10 +82,17 @@
     .field-label span.range-tag {
       font-size: 0.72rem;
       font-weight: 600;
-      color: #27794f;
-      background: #ebfbee;
       padding: 2px 6px;
       border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    .tag-normal {
+      color: #27794f;
+      background: #ebfbee;
+    }
+    .tag-alert {
+      color: #b7094c;
+      background: #ffe3e3;
     }
     .field-label span.hint {
       font-weight: normal;
@@ -126,12 +130,17 @@
     }
     .badge-left { margin-right: 8px; }
     .badge-right { margin-left: 8px; }
+
+    .form-buttons {
+      display: flex;
+      gap: 12px;
+    }
     .btn-submit {
+      flex: 2;
       background: #1e6b47;
       color: #ffffff;
       border: none;
       border-radius: 8px;
-      width: 100%;
       padding: 12px;
       font-size: 0.95rem;
       font-weight: 600;
@@ -150,7 +159,28 @@
       transform: scale(0.995);
     }
 
-    /* QR Code Card & Actions */
+    .btn-reset {
+      flex: 1;
+      background: #f1f5f3;
+      color: #495e52;
+      border: 1px solid #d2ded7;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-reset:hover {
+      background: #e2ede7;
+      border-color: #bccdc3;
+      color: #1f3629;
+    }
+
     .qr-actions {
       margin-top: 12px;
       display: flex;
@@ -179,7 +209,6 @@
       cursor: not-allowed;
     }
 
-    /* Dual-State QR Box */
     .qr-box-wrapper {
       width: 150px;
       height: 150px;
@@ -247,14 +276,12 @@
       </div>
     </section>
 
-    <!-- Metrics Row -->
     <section class="metrics" aria-label="Latest sensor values">
       <article class="metric"><span class="metric-icon blue">◈</span><div><small>pH LEVEL</small><strong id="current-ph">--</strong><em>pH scale</em></div></article>
       <article class="metric"><span class="metric-icon amber">≋</span><div><small>TDS VALUE</small><strong id="current-tds">--</strong><em>ppm</em></div></article>
       <article class="metric"><span class="metric-icon red">♨</span><div><small>TEMPERATURE</small><strong id="current-temperature">--</strong><em>°C</em></div></article>
     </section>
 
-    <!-- Current Status Section -->
     <section id="result" class="quality-card" aria-live="polite">
       <div class="quality-symbol" id="quality-symbol">?</div>
       <div class="quality-text">
@@ -269,7 +296,6 @@
       </div>
     </section>
 
-    <!-- Sensor Data & Manual Entry with Presets -->
     <section class="card reading-card">
       <div class="section-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div>
@@ -283,13 +309,12 @@
         ESP32 readings appear automatically. Enter parameters manually or use quick test presets:
       </p>
 
-      <!-- Quick Presets -->
       <div class="quick-presets">
         <span class="preset-label">Quick Presets:</span>
-        <button type="button" class="chip" onclick="loadPreset(6.65, 310, 26.5, 'SAMPLE-NORMAL')">✔ Pure Milk</button>
-        <button type="button" class="chip" onclick="loadPreset(8.40, 680, 27.0, 'DEFECT-DETERGENT')">✖ Detergent</button>
-        <button type="button" class="chip" onclick="loadPreset(5.80, 420, 28.0, 'DEFECT-CURD')">✖ Curd</button>
-        <button type="button" class="chip" onclick="loadPreset(6.60, 140, 25.0, 'DEFECT-DILUTED-WATER')">✖ Diluted Water</button>
+        <button type="button" class="chip" onclick="loadPreset('pure')">✔ Pure Milk</button>
+        <button type="button" class="chip" onclick="loadPreset('detergent')">✖ Detergent</button>
+        <button type="button" class="chip" onclick="loadPreset('curd')">✖ Curd</button>
+        <button type="button" class="chip" onclick="loadPreset('diluted')">✖ Diluted Water</button>
       </div>
 
       <details class="manual-panel" open>
@@ -301,7 +326,6 @@
         <form id="reading-form">
           <div class="form-grid">
             
-            <!-- Sample ID -->
             <div class="field-group">
               <label class="field-label" for="sample-id">
                 <span>Sample ID</span>
@@ -312,11 +336,10 @@
               </div>
             </div>
 
-            <!-- pH Level -->
             <div class="field-group">
               <label class="field-label" for="ph">
                 <span>pH Level</span>
-                <span class="range-tag">6.45 - 6.85</span>
+                <span id="ph-tag" class="range-tag tag-normal">6.45 - 6.85</span>
               </label>
               <div class="custom-input">
                 <span class="input-badge badge-left">pH</span>
@@ -324,11 +347,10 @@
               </div>
             </div>
 
-            <!-- TDS / Conductivity -->
             <div class="field-group">
               <label class="field-label" for="tds">
                 <span>TDS / Conductivity</span>
-                <span class="range-tag">220 - 580 ppm</span>
+                <span id="tds-tag" class="range-tag tag-normal">220 - 580 ppm</span>
               </label>
               <div class="custom-input">
                 <input id="tds" type="number" step="1" min="0" placeholder="310" value="310" required>
@@ -336,11 +358,10 @@
               </div>
             </div>
 
-            <!-- Temperature -->
             <div class="field-group">
               <label class="field-label" for="temperature">
                 <span>Temperature</span>
-                <span class="range-tag">&le; 30°C</span>
+                <span id="temp-tag" class="range-tag tag-normal">&le; 30°C</span>
               </label>
               <div class="custom-input">
                 <input id="temperature" type="number" step="0.1" placeholder="27.0" value="27.0" required>
@@ -350,15 +371,19 @@
 
           </div>
 
-          <button type="submit" class="btn-submit">
-            <span>Analyze Manually</span>
-            <span style="font-size:1.1rem; line-height:1;">→</span>
-          </button>
+          <div class="form-buttons">
+            <button type="submit" class="btn-submit">
+              <span>Analyze Manually</span>
+              <span style="font-size:1.1rem; line-height:1;">→</span>
+            </button>
+            <button type="button" id="reset-btn" class="btn-reset" onclick="resetRangeTags()">
+              <span>↺ Reset</span>
+            </button>
+          </div>
         </form>
       </details>
     </section>
 
-    <!-- QR Report Section -->
     <section id="qr-card" class="card qr-card" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
         <span class="eyebrow">VERIFIED CERTIFICATE</span>
@@ -372,7 +397,6 @@
         </div>
       </div>
 
-      <!-- Dual-State QR Container -->
       <div class="qr-box-wrapper">
         <div id="qr-placeholder" class="qr-placeholder">
           <span class="qr-placeholder-icon">⛶</span>
@@ -389,28 +413,75 @@
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
-    function loadPreset(ph, tds, temp, id) {
-      document.getElementById("ph").value = ph;
-      document.getElementById("tds").value = tds;
-      document.getElementById("temperature").value = temp;
-      document.getElementById("sample-id").value = id;
+    function resetRangeTags() {
+      const phTag = document.getElementById("ph-tag");
+      const tdsTag = document.getElementById("tds-tag");
+      const tempTag = document.getElementById("temp-tag");
+
+      phTag.innerText = "6.45 - 6.85";
+      phTag.className = "range-tag tag-normal";
+
+      tdsTag.innerText = "220 - 580 ppm";
+      tdsTag.className = "range-tag tag-normal";
+
+      tempTag.innerText = "\u2264 30\u00B0C";
+      tempTag.className = "range-tag tag-normal";
     }
 
-    // 2-Minute Polling (120,000 ms) for ESP32 readings
-    async function fetchLatestData() {
-      try {
-        const res = await fetch('/latest');
-        const data = await res.json();
-        if (data && typeof updateDashboard === 'function') {
-          updateDashboard(data);
-        }
-      } catch (err) {
-        // Retry silently on next cycle
+    function loadPreset(type) {
+      const phInput = document.getElementById("ph");
+      const tdsInput = document.getElementById("tds");
+      const tempInput = document.getElementById("temperature");
+      const sampleIdInput = document.getElementById("sample-id");
+
+      const phTag = document.getElementById("ph-tag");
+      const tdsTag = document.getElementById("tds-tag");
+      const tempTag = document.getElementById("temp-tag");
+
+      resetRangeTags();
+
+      if (type === 'pure') {
+        sampleIdInput.value = "SAMPLE-PURE-MILK";
+        phInput.value = 6.65;
+        tdsInput.value = 310;
+        tempInput.value = 26.5;
+
+        phTag.innerText = "Normal (6.45 - 6.85)";
+        tdsTag.innerText = "Normal (220 - 580)";
+        tempTag.innerText = "Safe (\u2264 30\u00B0C)";
+      } 
+      else if (type === 'detergent') {
+        sampleIdInput.value = "DEFECT-DETERGENT";
+        phInput.value = 8.40;
+        tdsInput.value = 680;
+        tempInput.value = 27.0;
+
+        phTag.innerText = "High pH > 7.00";
+        phTag.className = "range-tag tag-alert";
+
+        tdsTag.innerText = "High TDS > 600";
+        tdsTag.className = "range-tag tag-alert";
+      } 
+      else if (type === 'curd') {
+        sampleIdInput.value = "DEFECT-CURD";
+        phInput.value = 5.80;
+        tdsInput.value = 420;
+        tempInput.value = 28.0;
+
+        phTag.innerText = "Low pH < 6.40";
+        phTag.className = "range-tag tag-alert";
+      } 
+      else if (type === 'diluted') {
+        sampleIdInput.value = "DEFECT-DILUTED-WATER";
+        phInput.value = 6.60;
+        tdsInput.value = 140;
+        tempInput.value = 25.0;
+
+        tdsTag.innerText = "Low TDS < 220";
+        tdsTag.className = "range-tag tag-alert";
       }
     }
-    setInterval(fetchLatestData, 120000);
 
-    // Download QR logic
     async function downloadQRCode() {
       const qrImg = document.getElementById("qr-image");
       if (!qrImg || qrImg.style.display === "none" || !qrImg.src) {
