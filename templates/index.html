@@ -60,12 +60,20 @@
       color: #1e6b47;
     }
 
+    /* Fixed 2x2 Grid Layout */
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 16px;
       margin-bottom: 20px;
+      width: 100%;
     }
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .field-group {
       display: flex;
       flex-direction: column;
@@ -131,12 +139,14 @@
     .badge-left { margin-right: 8px; }
     .badge-right { margin-left: 8px; }
 
+    /* Bottom Button Bar */
     .form-buttons {
       display: flex;
       gap: 12px;
+      width: 100%;
     }
     .btn-submit {
-      flex: 2;
+      flex: 3;
       background: #1e6b47;
       color: #ffffff;
       border: none;
@@ -144,21 +154,16 @@
       padding: 12px;
       font-size: 0.95rem;
       font-weight: 600;
-      letter-spacing: 0.3px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: background-color 0.2s, transform 0.1s;
+      transition: background-color 0.2s;
     }
     .btn-submit:hover {
       background: #165436;
     }
-    .btn-submit:active {
-      transform: scale(0.995);
-    }
-
     .btn-reset {
       flex: 1;
       background: #f1f5f3;
