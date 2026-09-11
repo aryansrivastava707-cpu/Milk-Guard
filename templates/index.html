@@ -3,218 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MilkGuard | Quality Screening Portal</title>
+  <title>MilkGuard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    :root {
-      --primary-green: #1e6b47;
-      --primary-green-hover: #165436;
-      --bg-card: #ffffff;
-      --border-subtle: #e5ece8;
-      --text-main: #182820;
-      --text-muted: #677b70;
-    }
-
-    /* Top Metric Tiles Enhancement */
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-      margin-bottom: 22px;
-    }
-    .metric {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .metric:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-    }
-    .metric strong {
-      font-size: 1.4rem;
-      color: var(--text-main);
-      display: block;
-      line-height: 1.2;
-    }
-
-    /* Manual Card Enhancement */
-    .reading-card {
-      background: var(--bg-card);
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-      border: 1px solid var(--border-subtle);
-      margin-bottom: 24px;
-    }
-    .card-header-flex {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .pulse-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #eaf6ef;
-      color: var(--primary-green);
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 20px;
-      border: 1px solid #c9e8d6;
-    }
-    .pulse-dot {
-      width: 7px;
-      height: 7px;
-      background-color: #27ae60;
-      border-radius: 50%;
-      box-shadow: 0 0 0 rgba(39, 174, 96, 0.7);
-      animation: pulse 1.8s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(39, 174, 96, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
-    }
-
-    /* Preset Quick-Test Chips */
-    .quick-presets {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-    .preset-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-    .chip {
-      background: #f1f5f3;
-      border: 1px solid #dae5df;
-      color: var(--text-main);
-      padding: 3px 10px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .chip:hover {
-      background: #e2ede7;
-      border-color: #bcd5c7;
-      color: var(--primary-green);
-    }
-
-    /* Form Grids */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .field-label {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #2b3d32;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .range-tag {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: #2f855a;
-      background: #ebfbee;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-    .custom-input {
-      display: flex;
-      align-items: center;
-      background: #fbfdfc;
-      border: 1.5px solid #dbe6e0;
-      border-radius: 8px;
-      padding: 7px 12px;
-      transition: all 0.2s ease;
-    }
-    .custom-input:focus-within {
-      border-color: var(--primary-green);
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(30, 107, 71, 0.12);
-    }
-    .custom-input input {
-      border: none;
-      background: transparent;
-      width: 100%;
-      outline: none;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #1a2c20;
-    }
-    .input-badge {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #6a8274;
-      user-select: none;
-    }
-    .badge-left { margin-right: 8px; }
-    .badge-right { margin-left: 8px; }
-
-    /* Action Button */
-    .btn-submit {
-      background: var(--primary-green);
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      width: 100%;
-      padding: 13px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(30, 107, 71, 0.2);
-      transition: background-color 0.2s, transform 0.1s;
-    }
-    .btn-submit:hover {
-      background: var(--primary-green-hover);
-    }
-    .btn-submit:active {
-      transform: scale(0.99);
-    }
-
-    /* QR Action Section */
     .qr-actions {
-      margin-top: 14px;
+      margin-top: 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
     .btn-download {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      display: inline-block;
       width: fit-content;
-      padding: 8px 16px;
+      padding: 7px 14px;
       font-size: 0.85rem;
       font-weight: 600;
       color: #ffffff;
@@ -226,7 +27,62 @@
       transition: background-color 0.2s ease;
     }
     .btn-download:hover {
-      background-color: #123758;
+      background-color: #123655;
+    }
+    .btn-download:disabled {
+      background-color: #b0bec5;
+      cursor: not-allowed;
+    }
+
+    /* QR Placeholder Box */
+    .qr-box-wrapper {
+      width: 150px;
+      height: 150px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-placeholder {
+      width: 100%;
+      height: 100%;
+      border: 2px dashed #b8c7be;
+      border-radius: 10px;
+      background-color: #f7faf8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      color: #5c7466;
+    }
+    .qr-placeholder-icon {
+      font-size: 26px;
+      margin-bottom: 4px;
+      animation: pulse-icon 2s infinite ease-in-out;
+    }
+    @keyframes pulse-icon {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      50% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.7; }
+    }
+    .qr-placeholder-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .qr-placeholder-sub {
+      font-size: 0.65rem;
+      color: #8da396;
+      margin-top: 3px;
+    }
+    #qr-image {
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+      border: 1px solid #dcdfe3;
+      object-fit: contain;
     }
   </style>
 </head>
@@ -234,10 +90,7 @@
   <main class="page">
     <header class="hero">
       <div class="logo">MG</div>
-      <div>
-        <h1>MilkGuard</h1>
-        <p>Smart Milk Quality Screening System</p>
-      </div>
+      <div><h1>MilkGuard</h1><p>Smart Milk Quality Screening System</p></div>
       <span class="live-dot">● LIVE</span>
     </header>
 
@@ -245,39 +98,18 @@
       <span>🥛</span>
       <div>
         <strong>Multi-Sensor Quality Verification</strong><br>
-        <small>Physicochemical thresholds (FSSAI) evaluated with Supervised Machine Learning.</small>
+        <small>Simple check using pH, TDS and temperature sensors.</small>
       </div>
     </section>
 
-    <!-- Top Live Sensors Metrics -->
+    <!-- Metrics Row -->
     <section class="metrics" aria-label="Latest sensor values">
-      <article class="metric">
-        <span class="metric-icon blue">◈</span>
-        <div>
-          <small>pH LEVEL</small>
-          <strong id="current-ph">--</strong>
-          <em>Target: 6.45 - 6.85</em>
-        </div>
-      </article>
-      <article class="metric">
-        <span class="metric-icon amber">≋</span>
-        <div>
-          <small>TDS VALUE</small>
-          <strong id="current-tds">--</strong>
-          <em>Target: 220 - 580 ppm</em>
-        </div>
-      </article>
-      <article class="metric">
-        <span class="metric-icon red">♨</span>
-        <div>
-          <small>TEMPERATURE</small>
-          <strong id="current-temperature">--</strong>
-          <em>Cold Chain &le; 30°C</em>
-        </div>
-      </article>
+      <article class="metric"><span class="metric-icon blue">◈</span><div><small>pH LEVEL</small><strong id="current-ph">--</strong><em>pH scale</em></div></article>
+      <article class="metric"><span class="metric-icon amber">≋</span><div><small>TDS VALUE</small><strong id="current-tds">--</strong><em>ppm</em></div></article>
+      <article class="metric"><span class="metric-icon red">♨</span><div><small>TEMPERATURE</small><strong id="current-temperature">--</strong><em>°C</em></div></article>
     </section>
 
-    <!-- Evaluation Status Card -->
+    <!-- Current Status Section -->
     <section id="result" class="quality-card" aria-live="polite">
       <div class="quality-symbol" id="quality-symbol">?</div>
       <div class="quality-text">
@@ -292,135 +124,64 @@
       </div>
     </section>
 
-    <!-- Reading & Manual Testing Interface -->
+    <!-- Sensor Data / Manual Entry -->
     <section class="card reading-card">
-      <div class="card-header-flex">
-        <div>
-          <span class="eyebrow" style="color:var(--primary-green); font-size:0.75rem; font-weight:700; text-transform:uppercase;">Input Console</span>
-          <h2 style="font-size:1.35rem; font-weight:700; color:var(--text-main); margin:2px 0 0 0;">Milk Readings</h2>
-        </div>
-        <div class="pulse-badge">
-          <span class="pulse-dot"></span>
-          Auto refresh: 5s
-        </div>
+      <div class="section-title">
+        <div><span class="eyebrow">LIVE SENSOR DATA</span><h2>Milk Readings</h2></div>
+        <span class="auto">Auto refresh: 5 sec</span>
       </div>
-      
-      <p class="small" style="color:var(--text-muted); font-size:0.85rem; margin-bottom:14px;">
-        ESP32 readings appear automatically. Enter parameters manually or click sample presets below:
-      </p>
-
-      <!-- Quick-Test Demo Preset Chips -->
-      <div class="quick-presets">
-        <span class="preset-label">Quick Presets:</span>
-        <button type="button" class="chip" onclick="loadPreset(6.65, 310, 26.5, 'PURE-SAMPLE')">✔ Normal Fresh Milk</button>
-        <button type="button" class="chip" onclick="loadPreset(8.40, 680, 27.0, 'ALKALINE-DEFECT')">✖ Alkaline / Detergent</button>
-        <button type="button" class="chip" onclick="loadPreset(5.80, 420, 28.0, 'SOUR-CURDLED')">✖ Acidic / Curdling</button>
-        <button type="button" class="chip" onclick="loadPreset(6.60, 140, 25.0, 'DILUTED-WATER')">✖ Water Diluted</button>
-      </div>
-
+      <p class="small">ESP32 readings appear automatically. These fields can also be used for a manual test.</p>
       <details class="manual-panel" open>
-        <summary style="cursor:pointer; font-weight:600; color:var(--primary-green); margin-bottom:16px;">
-          <span>Manual Input Mode</span>
-          <small style="color:#7b8a82;">(Modify values directly)</small>
-        </summary>
-        
+        <summary>Manual test mode <small>Use only if ESP32 is not connected</small></summary>
         <form id="reading-form">
-          <div class="form-grid">
-            
-            <!-- Sample ID -->
-            <div class="field-group">
-              <label class="field-label" for="sample-id">
-                <span>Sample ID</span>
-                <span style="font-weight:normal; color:#8c9e94; font-size:0.72rem;">Optional</span>
-              </label>
-              <div class="custom-input">
-                <input id="sample-id" type="text" maxlength="40" placeholder="e.g. MG-BATCH-01">
-              </div>
-            </div>
-
-            <!-- pH Reading -->
-            <div class="field-group">
-              <label class="field-label" for="ph">
-                <span>pH Reading</span>
-                <span class="range-tag">6.45 - 6.85</span>
-              </label>
-              <div class="custom-input">
-                <span class="input-badge badge-left">pH</span>
-                <input id="ph" type="number" step="0.01" min="0" max="14" placeholder="6.65" value="6.65" required>
-              </div>
-            </div>
-
-            <!-- TDS Reading -->
-            <div class="field-group">
-              <label class="field-label" for="tds">
-                <span>TDS Value</span>
-                <span class="range-tag">220 - 580 ppm</span>
-              </label>
-              <div class="custom-input">
-                <input id="tds" type="number" step="1" min="0" placeholder="310" value="310" required>
-                <span class="input-badge badge-right">ppm</span>
-              </div>
-            </div>
-
-            <!-- Temperature -->
-            <div class="field-group">
-              <label class="field-label" for="temperature">
-                <span>Temperature</span>
-                <span class="range-tag">&le; 30.0°C</span>
-              </label>
-              <div class="custom-input">
-                <input id="temperature" type="number" step="0.1" placeholder="26.0" value="26.5" required>
-                <span class="input-badge badge-right">°C</span>
-              </div>
-            </div>
-
-          </div>
-
-          <button type="submit" class="btn-submit">
-            <span>Analyze Sample</span>
-            <span style="font-size:1.1rem; line-height:1;">→</span>
-          </button>
+          <label><span>Sample ID</span><div class="input-wrap"><input id="sample-id" type="text" maxlength="40" placeholder="Optional: MG-001"></div></label>
+          <label><span>pH Level</span><div class="input-wrap"><b>pH</b><input id="ph" type="number" step="0.01" min="0" max="14" value="6.65" required></div></label>
+          <label><span>TDS / Conductivity</span><div class="input-wrap"><input id="tds" type="number" step="1" min="0" value="310" required><b>ppm</b></div></label>
+          <label><span>Temperature</span><div class="input-wrap"><input id="temperature" type="number" step="0.1" value="27" required><b>°C</b></div></label>
+          <button type="submit"><span>Analyze Manually</span> →</button>
         </form>
       </details>
     </section>
 
     <!-- QR Report Section -->
-    <section id="qr-card" class="card qr-card hidden">
+    <section id="qr-card" class="card qr-card" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
         <span class="eyebrow">VERIFIED CERTIFICATE</span>
         <h2>Save or Share QR</h2>
-        <p id="qr-sample" class="small"></p>
+        <p id="qr-sample" class="small" style="color: #6a7c72;">Run a test to generate an audit report & QR certificate.</p>
         <div class="qr-actions">
-          <a id="report-link" target="_blank" rel="noopener">Open Verification Report →</a>
-          <button type="button" id="download-qr-btn" class="btn-download" onclick="downloadQRCode()">
-            ⬇ Download PNG QR
+          <a id="report-link" target="_blank" rel="noopener" style="display: none;">Open individual report →</a>
+          <button type="button" id="download-qr-btn" class="btn-download" onclick="downloadQRCode()" disabled>
+            ⬇ Download QR Code
           </button>
         </div>
       </div>
-      <img id="qr-image" alt="Test verification QR code">
+
+      <!-- Dual-State QR Container -->
+      <div class="qr-box-wrapper">
+        <div id="qr-placeholder" class="qr-placeholder">
+          <span class="qr-placeholder-icon">⛶</span>
+          <span class="qr-placeholder-text">Awaiting Scan</span>
+          <span class="qr-placeholder-sub">Test a sample</span>
+        </div>
+        <img id="qr-image" alt="QR Code" style="display: none;">
+      </div>
     </section>
 
-    <p class="notice">
-      <b>Prototype only:</b> Physicochemical threshold classification does not replace comprehensive certified microbiological assays.
-    </p>
-    <footer>MilkGuard Project · ESP32 + Flask + Scikit-Learn</footer>
+    <p class="notice"><b>Prototype only:</b> this screening output does not identify a specific adulterant or replace laboratory testing.</p>
+    <footer>MilkGuard Mini Project · ESP32 + Flask + Machine Learning</footer>
   </main>
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
-    // Quick Demo Preset Filler
-    function loadPreset(ph, tds, temp, id) {
-      document.getElementById("ph").value = ph;
-      document.getElementById("tds").value = tds;
-      document.getElementById("temperature").value = temp;
-      document.getElementById("sample-id").value = id;
-    }
-
-    // Direct QR Code Download
+    // Hook into QR update function
+    const originalUpdateDashboard = window.updateDashboard;
+    
+    // Download logic
     async function downloadQRCode() {
       const qrImg = document.getElementById("qr-image");
-      if (!qrImg || !qrImg.src) {
-        alert("No QR Code available to download!");
+      if (!qrImg || qrImg.style.display === "none" || !qrImg.src) {
+        alert("Please analyze a milk sample first to generate the QR Code!");
         return;
       }
 
