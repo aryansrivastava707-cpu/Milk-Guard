@@ -1,12 +1,4 @@
-"""Create demo training data and train one MilkGuard screening model.
-
-This is NOT a laboratory adulterant-identification model. The values are
-synthetic, chosen only to demonstrate a Normal/Suspicious classification flow.
-Replace data/synthetic_milk_data.csv with labelled measurements collected from
-your own tested samples before making any real-world claim.
-"""
 from pathlib import Path
-
 import joblib
 import numpy as np
 import pandas as pd
@@ -19,60 +11,75 @@ DATA_DIR = BASE_DIR / "data"
 MODEL_DIR = BASE_DIR / "model"
 RANDOM_SEED = 42
 
-
-def make_demo_data(rows=300):
-    """Generate labelled, artificial readings for a classroom demonstration."""
+def make_data(rows=1200):
     rng = np.random.default_rng(RANDOM_SEED)
-    normal_count = rows // 2
-    suspicious_count = rows - normal_count
+    half = rows // 2
 
+    # Normal Pure Milk (pH: 6.5 - 6.8 | TDS: 250 - 550 | Temp: 4 - 30 C)
     normal = pd.DataFrame({
-        "ph": rng.normal(6.65, 0.15, normal_count).clip(6.2, 7.1),
-        "tds": rng.normal(310, 35, normal_count).clip(220, 390),
-        "temperature": rng.normal(27, 3.5, normal_count).clip(18, 35),
-        "label": 0,
+        "ph": rng.uniform(6.50, 6.75, half),
+        "tds": rng.uniform(260, 520, half),
+        "temperature": rng.uniform(4.0, 28.0, half),
+        "label": 0
     })
-    # Suspicious samples simulate out-of-range readings, not a named adulterant.
-    low_ph = pd.DataFrame({
-        "ph": rng.normal(5.7, 0.25, suspicious_count // 3),
-        "tds": rng.normal(330, 55, suspicious_count // 3),
-        "temperature": rng.normal(28, 5, suspicious_count // 3),
-        "label": 1,
-    })
-    high_tds = pd.DataFrame({
-        "ph": rng.normal(6.65, 0.2, suspicious_count // 3),
-        "tds": rng.normal(520, 70, suspicious_count // 3),
-        "temperature": rng.normal(28, 5, suspicious_count // 3),
-        "label": 1,
-    })
-    unusual_temp = pd.DataFrame({
-        "ph": rng.normal(6.65, 0.2, suspicious_count - 2 * (suspicious_count // 3)),
-        "tds": rng.normal(310, 45, suspicious_count - 2 * (suspicious_count // 3)),
-        "temperature": rng.choice([rng.normal(12, 2), rng.normal(46, 3)], suspicious_count - 2 * (suspicious_count // 3)),
-        "label": 1,
-    })
-    return pd.concat([normal, low_ph, high_tds, unusual_temp], ignore_index=True).sample(frac=1, random_state=RANDOM_SEED)
 
+    # Suspicious / Adulterated Categories
+    # 1. Acidic / Spoiled (pH < 6.4)
+    acidic = pd.DataFrame({
+        "ph": rng.uniform(3.5, 6.35, half // 4),
+        "tds": rng.uniform(300, 800, half // 4),
+        "temperature": rng.uniform(10.0, 38.0, half // 4),
+        "label": 1
+    })
+
+    # 2. Alkaline / Detergent Adulterated (pH > 6.9)
+    alkaline = pd.DataFrame({
+        "ph": rng.uniform(7.0, 11.0, half // 4),
+        "tds": rng.uniform(400, 950, half // 4),
+        "temperature": rng.uniform(10.0, 38.0, half // 4),
+        "label": 1
+    })
+
+    # 3. High TDS / Added Salts, Urea, Starch (TDS > 600)
+    high_tds = pd.DataFrame({
+        "ph": rng.uniform(6.4, 7.2, half // 4),
+        "tds": rng.uniform(650, 2500, half // 4),
+        "temperature": rng.uniform(10.0, 35.0, half // 4),
+        "label": 1
+    })
+
+    # 4. Diluted with excess water (TDS < 200) or high temp spoilage
+    diluted_or_hot = pd.DataFrame({
+        "ph": rng.uniform(6.1, 6.9, half - (3 * (half // 4))),
+        "tds": rng.uniform(40, 210, half - (3 * (half // 4))),
+        "temperature": rng.uniform(32.0, 55.0, half - (3 * (half // 4))),
+        "label": 1
+    })
+
+    df = pd.concat([normal, acidic, alkaline, high_tds, diluted_or_hot], ignore_index=True)
+    return df.sample(frac=1, random_state=RANDOM_SEED)
 
 def main():
     DATA_DIR.mkdir(exist_ok=True)
     MODEL_DIR.mkdir(exist_ok=True)
-    data = make_demo_data()
+
+    data = make_data()
     data.to_csv(DATA_DIR / "synthetic_milk_data.csv", index=False)
 
     x = data[["ph", "tds", "temperature"]]
     y = data["label"]
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20,
-                                                        random_state=RANDOM_SEED, stratify=y)
-    model = RandomForestClassifier(n_estimators=120, max_depth=5,
-                                   random_state=RANDOM_SEED)
-    model.fit(x_train, y_train)
-    predictions = model.predict(x_test)
-    print("Demo test accuracy:", round(accuracy_score(y_test, predictions), 3))
-    print(classification_report(y_test, predictions, target_names=["Normal", "Suspicious"]))
-    joblib.dump(model, MODEL_DIR / "milkguard_model.joblib")
-    print("Saved model/milkguard_model.joblib")
 
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=RANDOM_SEED, stratify=y)
+
+    model = RandomForestClassifier(n_estimators=100, max_depth=6, random_state=RANDOM_SEED)
+    model.fit(x_train, y_train)
+
+    preds = model.predict(x_test)
+    print("Test Accuracy:", round(accuracy_score(y_test, preds), 3))
+    print(classification_report(y_test, preds, target_names=["Normal", "Suspicious"]))
+
+    joblib.dump(model, MODEL_DIR / "milkguard_model.joblib")
+    print("Model saved to model/milkguard_model.joblib")
 
 if __name__ == "__main__":
     main()
