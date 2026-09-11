@@ -276,7 +276,7 @@
           <span class="eyebrow" style="color:#2b7a54; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Live Sensor Data</span>
           <h2 style="font-size:1.4rem; font-weight:700; color:#1a2b21; margin:2px 0 0 0;">Milk Readings</h2>
         </div>
-        <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px;">Auto refresh: 20 sec</span>
+        <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px;">Auto refresh: 2 min</span>
       </div>
       
       <p class="small" style="color:#6d7f74; font-size:0.85rem; margin-bottom:14px;">
@@ -389,7 +389,6 @@
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
-    // Quick Presets Filler
     function loadPreset(ph, tds, temp, id) {
       document.getElementById("ph").value = ph;
       document.getElementById("tds").value = tds;
@@ -397,7 +396,7 @@
       document.getElementById("sample-id").value = id;
     }
 
-    // 20-Second Polling for ESP32 readings
+    // 2-Minute Polling (120,000 ms) for ESP32 readings
     async function fetchLatestData() {
       try {
         const res = await fetch('/latest');
@@ -409,7 +408,7 @@
         // Retry silently on next cycle
       }
     }
-    setInterval(fetchLatestData, 20000);
+    setInterval(fetchLatestData, 120000);
 
     // Download QR logic
     async function downloadQRCode() {
