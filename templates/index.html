@@ -47,7 +47,7 @@
       background: #f1f5f3;
       border: 1px solid #dae5df;
       color: #213328;
-      padding: 4px 10px;
+      padding: 5px 12px;
       font-size: 0.75rem;
       font-weight: 600;
       border-radius: 6px;
@@ -335,10 +335,9 @@
 
       <div class="quick-presets">
         <span class="preset-label">Quick Presets:</span>
-        <button type="button" class="chip" onclick="loadPreset('pure')">✔ Pure Milk</button>
-        <button type="button" class="chip" onclick="loadPreset('detergent')">✖ Detergent</button>
-        <button type="button" class="chip" onclick="loadPreset('curd')">✖ Curd</button>
-        <button type="button" class="chip" onclick="loadPreset('diluted')">✖ Diluted Water</button>
+        <button type="button" class="chip" onclick="loadPreset('pure')">Pure Milk</button>
+        <button type="button" class="chip" onclick="loadPreset('curd')">Curd</button>
+        <button type="button" class="chip" onclick="loadPreset('diluted')">Diluted Water</button>
       </div>
 
       <details class="manual-panel" open>
@@ -472,18 +471,6 @@
         phTag.innerText = "Normal (6.45 - 6.85)";
         tdsTag.innerText = "Normal (220 - 580)";
         tempTag.innerText = "Safe (\u2264 30\u00B0C)";
-      } 
-      else if (type === 'detergent') {
-        sampleIdInput.value = "DEFECT-DETERGENT";
-        phInput.value = 8.40;
-        tdsInput.value = 680;
-        tempInput.value = 27.0;
-
-        phTag.innerText = "High pH > 7.00";
-        phTag.className = "range-tag tag-alert";
-
-        tdsTag.innerText = "High TDS > 600";
-        tdsTag.className = "range-tag tag-alert";
       } 
       else if (type === 'curd') {
         sampleIdInput.value = "DEFECT-CURD";
