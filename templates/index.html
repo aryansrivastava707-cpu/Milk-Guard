@@ -6,6 +6,151 @@
   <title>MilkGuard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
+    /* Manual Input Section */
+    .reading-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+      border: 1px solid #eef2ef;
+      margin-bottom: 24px;
+    }
+    .manual-panel summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #1e6b47;
+      margin-bottom: 16px;
+      user-select: none;
+      outline: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .manual-panel summary small {
+      color: #7b8a82;
+      font-weight: normal;
+      margin-left: 6px;
+    }
+
+    /* Quick Preset Chips */
+    .quick-presets {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .preset-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #6a7c72;
+    }
+    .chip {
+      background: #f1f5f3;
+      border: 1px solid #dae5df;
+      color: #213328;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .chip:hover {
+      background: #e2ede7;
+      border-color: #bcd5c7;
+      color: #1e6b47;
+    }
+
+    /* 2x2 Form Grid */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #3b4e43;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .field-label span.range-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #27794f;
+      background: #ebfbee;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .field-label span.hint {
+      font-weight: normal;
+      color: #8c9e94;
+      font-size: 0.75rem;
+    }
+    .custom-input {
+      display: flex;
+      align-items: center;
+      background: #fafcfb;
+      border: 1.5px solid #dce5df;
+      border-radius: 8px;
+      padding: 7px 12px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .custom-input:focus-within {
+      border-color: #2b7a54;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(43, 122, 84, 0.12);
+    }
+    .custom-input input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      outline: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #213328;
+    }
+    .input-badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #5c7265;
+      user-select: none;
+    }
+    .badge-left { margin-right: 8px; }
+    .badge-right { margin-left: 8px; }
+    .btn-submit {
+      background: #1e6b47;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      padding: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    .btn-submit:hover {
+      background: #165436;
+    }
+    .btn-submit:active {
+      transform: scale(0.995);
+    }
+
+    /* QR Code Card & Actions */
     .qr-actions {
       margin-top: 12px;
       display: flex;
@@ -34,7 +179,7 @@
       cursor: not-allowed;
     }
 
-    /* QR Placeholder Box */
+    /* Dual-State QR Box */
     .qr-box-wrapper {
       width: 150px;
       height: 150px;
@@ -124,21 +269,91 @@
       </div>
     </section>
 
-    <!-- Sensor Data / Manual Entry -->
+    <!-- Sensor Data & Manual Entry with Presets -->
     <section class="card reading-card">
-      <div class="section-title">
-        <div><span class="eyebrow">LIVE SENSOR DATA</span><h2>Milk Readings</h2></div>
-        <span class="auto">Auto refresh: 5 sec</span>
+      <div class="section-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div>
+          <span class="eyebrow" style="color:#2b7a54; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Live Sensor Data</span>
+          <h2 style="font-size:1.4rem; font-weight:700; color:#1a2b21; margin:2px 0 0 0;">Milk Readings</h2>
+        </div>
+        <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px;">Auto refresh: 5 sec</span>
       </div>
-      <p class="small">ESP32 readings appear automatically. These fields can also be used for a manual test.</p>
+      
+      <p class="small" style="color:#6d7f74; font-size:0.85rem; margin-bottom:14px;">
+        ESP32 readings appear automatically. Enter parameters manually or use quick test presets:
+      </p>
+
+      <!-- Updated Quick Presets -->
+      <div class="quick-presets">
+        <span class="preset-label">Quick Presets:</span>
+        <button type="button" class="chip" onclick="loadPreset(6.65, 310, 26.5, 'SAMPLE-NORMAL')">✔ Normal Pure Milk</button>
+        <button type="button" class="chip" onclick="loadPreset(8.40, 680, 27.0, 'DEFECT-DETERGENT')">✖ Detergent</button>
+        <button type="button" class="chip" onclick="loadPreset(5.80, 420, 28.0, 'DEFECT-CURD')">✖ Curd</button>
+        <button type="button" class="chip" onclick="loadPreset(6.60, 140, 25.0, 'DEFECT-DILUTED-WATER')">✖ Diluted Water</button>
+      </div>
+
       <details class="manual-panel" open>
-        <summary>Manual test mode <small>Use only if ESP32 is not connected</small></summary>
+        <summary>
+          <span>Manual test mode</span>
+          <small>Use only if ESP32 is not connected</small>
+        </summary>
+        
         <form id="reading-form">
-          <label><span>Sample ID</span><div class="input-wrap"><input id="sample-id" type="text" maxlength="40" placeholder="Optional: MG-001"></div></label>
-          <label><span>pH Level</span><div class="input-wrap"><b>pH</b><input id="ph" type="number" step="0.01" min="0" max="14" value="6.65" required></div></label>
-          <label><span>TDS / Conductivity</span><div class="input-wrap"><input id="tds" type="number" step="1" min="0" value="310" required><b>ppm</b></div></label>
-          <label><span>Temperature</span><div class="input-wrap"><input id="temperature" type="number" step="0.1" value="27" required><b>°C</b></div></label>
-          <button type="submit"><span>Analyze Manually</span> →</button>
+          <div class="form-grid">
+            
+            <!-- Sample ID -->
+            <div class="field-group">
+              <label class="field-label" for="sample-id">
+                <span>Sample ID</span>
+                <span class="hint">Optional</span>
+              </label>
+              <div class="custom-input">
+                <input id="sample-id" type="text" maxlength="40" placeholder="Optional: MG-001">
+              </div>
+            </div>
+
+            <!-- pH Level -->
+            <div class="field-group">
+              <label class="field-label" for="ph">
+                <span>pH Level</span>
+                <span class="range-tag">6.45 - 6.85</span>
+              </label>
+              <div class="custom-input">
+                <span class="input-badge badge-left">pH</span>
+                <input id="ph" type="number" step="0.01" min="0" max="14" placeholder="6.65" value="6.65" required>
+              </div>
+            </div>
+
+            <!-- TDS / Conductivity -->
+            <div class="field-group">
+              <label class="field-label" for="tds">
+                <span>TDS / Conductivity</span>
+                <span class="range-tag">220 - 580 ppm</span>
+              </label>
+              <div class="custom-input">
+                <input id="tds" type="number" step="1" min="0" placeholder="310" value="310" required>
+                <span class="input-badge badge-right">ppm</span>
+              </div>
+            </div>
+
+            <!-- Temperature -->
+            <div class="field-group">
+              <label class="field-label" for="temperature">
+                <span>Temperature</span>
+                <span class="range-tag">&le; 30°C</span>
+              </label>
+              <div class="custom-input">
+                <input id="temperature" type="number" step="0.1" placeholder="27.0" value="27.0" required>
+                <span class="input-badge badge-right">°C</span>
+              </div>
+            </div>
+
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <span>Analyze Manually</span>
+            <span style="font-size:1.1rem; line-height:1;">→</span>
+          </button>
         </form>
       </details>
     </section>
@@ -174,10 +389,13 @@
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
-    // Hook into QR update function
-    const originalUpdateDashboard = window.updateDashboard;
-    
-    // Download logic
+    function loadPreset(ph, tds, temp, id) {
+      document.getElementById("ph").value = ph;
+      document.getElementById("tds").value = tds;
+      document.getElementById("temperature").value = temp;
+      document.getElementById("sample-id").value = id;
+    }
+
     async function downloadQRCode() {
       const qrImg = document.getElementById("qr-image");
       if (!qrImg || qrImg.style.display === "none" || !qrImg.src) {
