@@ -64,15 +64,14 @@ def predict():
         if not (0 <= ph <= 14 and 0 <= tds <= 5000 and -10 <= temperature <= 100):
             return jsonify(error="Please enter realistic sensor values."), 400
 
-        # Exact match reasoning engine
         reasons = []
         if ph < 6.40:
             reasons.append(f"Low pH ({ph}) - Curd detected")
         elif ph > 6.85:
-            reasons.append(f"High pH ({ph}) - Detergent detected")
+            reasons.append(f"High pH ({ph}) - Abnormal chemical alkalinity")
 
         if tds > 600:
-            reasons.append(f"High TDS ({int(tds)} ppm) - Unnatural dissolved solids (urea/salts/starch)")
+            reasons.append(f"High TDS ({int(tds)} ppm) - Unnatural dissolved solids")
         elif tds < 220:
             reasons.append(f"Low TDS ({int(tds)} ppm) - Diluted Water detected")
 
@@ -81,7 +80,6 @@ def predict():
 
         is_physically_abnormal = len(reasons) > 0
 
-        # Model Inference
         model = get_model()
         features = pd.DataFrame([[ph, tds, temperature]], columns=["ph", "tds", "temperature"])
         prediction = int(model.predict(features)[0])
