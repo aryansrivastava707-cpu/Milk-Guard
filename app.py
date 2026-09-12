@@ -24,6 +24,33 @@ def get_model():
     return joblib.load(MODEL_PATH)
 
 
+def calculate_gradual_risk(ph, tds, temperature):
+    """Calculates risk proportionally instead of hardcoding 94%."""
+    ph_risk = 0.0
+    tds_risk = 0.0
+    temp_risk = 0.0
+
+    # pH Risk (Normal: 6.5 to 6.8)
+    if ph < 6.5:
+        ph_risk = min(max((6.5 - ph) / (6.5 - 5.0) * 100.0, 0.0), 100.0)
+    elif ph > 6.8:
+        ph_risk = min(max((ph - 6.8) / (8.5 - 6.8) * 100.0, 0.0), 100.0)
+
+    # TDS Risk (Normal: 600 to 1200 ppm)
+    if tds < 600:
+        tds_risk = min(max((600.0 - tds) / (600.0 - 200.0) * 100.0, 0.0), 100.0)
+    elif tds > 1200:
+        tds_risk = min(max((tds - 1200.0) / (2500.0 - 1200.0) * 100.0, 0.0), 100.0)
+
+    # Temperature Risk (Normal: <= 30.0°C)
+    if temperature > 30.0:
+        temp_risk = min(max((temperature - 30.0) / 15.0 * 100.0, 0.0), 100.0)
+
+    # Weighted: 50% pH + 35% TDS + 15% Temp
+    total_risk = (ph_risk * 0.50) + (tds_risk * 0.35) + (temp_risk * 0.15)
+    return total_risk / 100.0  # Returns decimal probability (0.0 to 1.0)
+
+
 def save_history(test_id, sample_id, ph, tds, temperature, result, probability):
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     row = pd.DataFrame([{
@@ -65,37 +92,37 @@ def predict():
             return jsonify(error="Please enter realistic sensor values."), 400
 
         reasons = []
-        if ph < 6.40:
-            reasons.append(f"Low pH ({ph}) - Curd detected")
-        elif ph > 6.85:
-            reasons.append(f"High pH ({ph}) - Abnormal chemical alkalinity")
+        if ph < 6.50:
+            reasons.append(f"Low pH ({ph}) - Acidic / Curdling risk")
+        elif ph > 6.80:
+            reasons.append(f"High pH ({ph}) - Abnormal alkaline adulterant")
 
-        if tds > 600:
-            reasons.append(f"High TDS ({int(tds)} ppm) - Unnatural dissolved solids")
-        elif tds < 220:
-            reasons.append(f"Low TDS ({int(tds)} ppm) - Diluted Water detected")
+        if tds > 1200:
+            reasons.append(f"High TDS ({int(tds)} ppm) - Unnatural dissolved salts/solids")
+        elif tds < 600:
+            reasons.append(f"Low TDS ({int(tds)} ppm) - Diluted water detected")
 
         if temperature > 32.0:
             reasons.append(f"High Temperature ({temperature}°C) - Cold chain breakdown")
 
-        is_physically_abnormal = len(reasons) > 0
+        # Dynamic calculated risk
+        heuristic_probability = calculate_gradual_risk(ph, tds, temperature)
 
-        model = get_model()
-        features = pd.DataFrame([[ph, tds, temperature]], columns=["ph", "tds", "temperature"])
-        prediction = int(model.predict(features)[0])
-        probability = float(model.predict_proba(features)[0][1])
+        # ML Model check
+        try:
+            model = get_model()
+            features = pd.DataFrame([[ph, tds, temperature]], columns=["ph", "tds", "temperature"])
+            ml_prob = float(model.predict_proba(features)[0][1])
+            probability = max(heuristic_probability, ml_prob)
+        except Exception:
+            probability = heuristic_probability
 
-        if is_physically_abnormal:
+        if probability >= 0.40:
             result = "SUSPICIOUS"
-            probability = max(probability, 0.94)
-            reason_text = " • ".join(reasons)
+            reason_text = " • ".join(reasons) if reasons else "Parameters deviate from normal milk benchmarks."
         else:
-            if prediction == 1:
-                result = "SUSPICIOUS"
-                reason_text = "Multivariate ML pattern indicates abnormal milk composition."
-            else:
-                result = "NORMAL"
-                reason_text = "All parameters (pH, TDS, Temperature) meet standard dairy benchmarks."
+            result = "NORMAL"
+            reason_text = "All parameters (pH, TDS, Temperature) meet standard dairy benchmarks."
 
         test_id = str(uuid.uuid4())
         sample_id = str(values.get("sample_id") or f"MG-{test_id[:8].upper()}")[:40]
@@ -111,7 +138,7 @@ def predict():
             tds=tds,
             temperature=temperature,
             test_id=test_id, 
-            sample_id=sample_id,
+            sample_id=sample_id, 
             report_url=report_url
         )
     except (KeyError, TypeError, ValueError):
