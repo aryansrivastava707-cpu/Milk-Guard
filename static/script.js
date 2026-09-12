@@ -32,9 +32,9 @@ form.addEventListener('submit', async (event) => {
 if (resetBtn) {
   resetBtn.addEventListener('click', () => {
     document.getElementById('sample-id').value = '';
-    document.getElementById('ph').value = '6.65';
-    document.getElementById('tds').value = '310';
-    document.getElementById('temperature').value = '27';
+    document.getElementById('ph').value = '';
+    document.getElementById('tds').value = '';
+    document.getElementById('temperature').value = '';
 
     document.getElementById('current-ph').textContent = '--';
     document.getElementById('current-tds').textContent = '--';
@@ -96,9 +96,8 @@ async function loadLatestSensorReading() {
 }
 
 function updateDashboard(row) {
-  if (row.ph !== undefined) document.getElementById('ph').value = row.ph;
-  if (row.tds !== undefined) document.getElementById('tds').value = row.tds;
-  if (row.temperature !== undefined) document.getElementById('temperature').value = row.temperature;
+  // Input fields ko fill karne wali lines yahan se hata di gayi hain
+  // Ab input boxes khali rahenge aur sirf background hint dikhega
   
   if (row.ph !== undefined) document.getElementById('current-ph').textContent = Number(row.ph).toFixed(2);
   if (row.tds !== undefined) document.getElementById('current-tds').textContent = Math.round(row.tds);
