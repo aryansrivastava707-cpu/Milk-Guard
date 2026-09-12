@@ -8,7 +8,147 @@
   <style>
     .dashboard-container { max-width: 900px; margin: 2rem auto; font-family: sans-serif; }
     .card { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
-    .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MilkGuard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Top Quality Status Banner -->
+    <div class="card status-card">
+      <div class="status-left">
+        <span class="section-subtitle">CURRENT QUALITY STATUS</span>
+        <div class="status-title-row">
+          <span id="quality-symbol" class="status-icon">!</span>
+          <h2 id="status" class="status-heading">SUSPICIOUS</h2>
+        </div>
+        <p id="probability" class="status-reason">
+          <strong>Reason:</strong> High pH (14.0) - Abnormal alkaline adulterant • High Temperature (100.0°C) - Cold chain breakdown
+        </p>
+      </div>
+      <div class="status-right">
+        <span class="section-subtitle">SCREENING SCORE</span>
+        <div id="score-value" class="score-text">--</div>
+        <div class="progress-bar-container">
+          <div id="score-bar" class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Sensor Data & Controls -->
+    <div class="card readings-card">
+      <div class="card-header-row">
+        <div>
+          <span class="badge-title">LIVE SENSOR DATA</span>
+          <h1 class="card-title">Milk Readings</h1>
+          <p class="card-desc">ESP32 readings appear automatically. Enter parameters manually or use quick test presets:</p>
+        </div>
+        <div class="auto-refresh-badge">Auto refresh: 2 min</div>
+      </div>
+
+      <!-- Quick Preset Buttons -->
+      <div class="presets-row">
+        <span class="presets-label">Quick Presets:</span>
+        <button type="button" class="preset-btn" onclick="document.getElementById('sample-id').value='Pure Milk'; document.getElementById('ph').value='6.65'; document.getElementById('tds').value='850'; document.getElementById('temperature').value='25.0';">Pure Milk</button>
+        <button type="button" class="preset-btn" onclick="document.getElementById('sample-id').value='Curd'; document.getElementById('ph').value='5.10'; document.getElementById('tds').value='920'; document.getElementById('temperature').value='27.0';">Curd</button>
+        <button type="button" class="preset-btn" onclick="document.getElementById('sample-id').value='Diluted Water'; document.getElementById('ph').value='6.70'; document.getElementById('tds').value='210'; document.getElementById('temperature').value='24.0';">Diluted Water</button>
+      </div>
+
+      <div class="manual-note">
+        <span class="note-green">Manual test mode</span> <span class="note-gray">Use only if ESP32 is not connected</span>
+      </div>
+
+      <!-- Form Inputs -->
+      <form id="reading-form">
+        <div class="form-grid">
+          
+          <div class="form-group">
+            <div class="label-row">
+              <label for="sample-id">Sample ID</label>
+              <span class="label-meta">Optional</span>
+            </div>
+            <input type="text" id="sample-id" placeholder="Optional: MG-001">
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="ph">pH Level</label>
+              <span class="range-badge">6.45 - 6.85</span>
+            </div>
+            <input type="number" step="any" id="ph" placeholder="6.65">
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="tds">TDS / Conductivity</label>
+              <span class="range-badge">220 - 580 ppm</span>
+            </div>
+            <div class="input-with-unit">
+              <input type="number" step="any" id="tds" placeholder="310">
+              <span class="unit-tag">ppm</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="temperature">Temperature</label>
+              <span class="range-badge">Safe (&le; 30&deg;C)</span>
+            </div>
+            <div class="input-with-unit">
+              <input type="number" step="any" id="temperature" placeholder="27">
+              <span class="unit-tag">&deg;C</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="action-buttons">
+          <button type="submit" class="btn-analyze">Analyze</button>
+          <button type="button" id="reset-btn" class="btn-reset">&#8635; Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Live Reading Indicator Cards -->
+    <div class="readings-summary-grid">
+      <div class="mini-card">
+        <span class="mini-label">CURRENT pH</span>
+        <div id="current-ph" class="mini-val">--</div>
+      </div>
+      <div class="mini-card">
+        <span class="mini-label">CURRENT TDS</span>
+        <div id="current-tds" class="mini-val">--</div>
+      </div>
+      <div class="mini-card">
+        <span class="mini-label">CURRENT TEMP</span>
+        <div id="current-temperature" class="mini-val">--</div>
+      </div>
+    </div>
+
+    <!-- Certificate / Report Card -->
+    <div class="card cert-card">
+      <div class="cert-info">
+        <h3>Audit Report & Certificate</h3>
+        <p id="qr-sample">Run a test to generate an audit report & QR certificate.</p>
+        <a id="report-link" href="#" target="_blank" style="display: none;">View Full Public Audit Report &rarr;</a>
+      </div>
+      <div class="cert-qr-box">
+        <div id="qr-placeholder" class="qr-placeholder">QR Ready</div>
+        <img id="qr-image" class="qr-img" alt="Certificate QR" style="display: none;">
+      </div>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
     .input-field { display: flex; flex-direction: column; }
     .input-field label { font-size: 0.85rem; font-weight: bold; margin-bottom: 0.25rem; }
     .input-field input { padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
