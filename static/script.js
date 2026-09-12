@@ -108,7 +108,7 @@ function updateDashboard(row) {
   const score = Number(row.suspicious_probability || 0);
   const status = document.getElementById('status');
   
-  status.textContent = suspicious ? '⚠ SUSPICIOUS' : 'PURE MILK';
+  status.textContent = suspicious ? 'SUSPICIOUS' : 'PURE MILK';
   status.className = suspicious ? 'suspicious' : 'normal';
   status.style.color = suspicious ? '#d90429' : '#2b9348';
   
