@@ -3,22 +3,43 @@ const resetBtn = document.getElementById('reset-btn');
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
+  
+  const sampleIdVal = document.getElementById('sample-id').value.trim();
+  const phVal = document.getElementById('ph').value.trim();
+  const tdsVal = document.getElementById('tds').value.trim();
+  const tempVal = document.getElementById('temperature').value.trim();
+
+  // Sample ID check
+  if (!sampleIdVal) {
+    alert("Sample ID daalna zaroori hai!");
+    document.getElementById('sample-id').focus();
+    return;
+  }
+
+  if (!phVal || !tdsVal || !tempVal) {
+    alert("Kripya saare sensor values bharein!");
+    return;
+  }
+
   const readings = {
-    sample_id: document.getElementById('sample-id').value,
-    ph: document.getElementById('ph').value,
-    tds: document.getElementById('tds').value,
-    temperature: document.getElementById('temperature').value
+    sample_id: sampleIdVal,
+    ph: phVal,
+    tds: tdsVal,
+    temperature: tempVal
   };
+
   const response = await fetch('/predict', {
     method: 'POST', 
     headers: {'Content-Type': 'application/json'}, 
     body: JSON.stringify(readings)
   });
+  
   const data = await response.json();
   if (!response.ok) { 
     alert(data.error); 
     return; 
   }
+  
   updateDashboard({
     ...readings, 
     result: data.result, 
@@ -96,9 +117,7 @@ async function loadLatestSensorReading() {
 }
 
 function updateDashboard(row) {
-  // Input fields ko fill karne wali lines yahan se hata di gayi hain
-  // Ab input boxes khali rahenge aur sirf background hint dikhega
-  
+  // Input fields autofill nahi honge taaki boxes blank rahein
   if (row.ph !== undefined) document.getElementById('current-ph').textContent = Number(row.ph).toFixed(2);
   if (row.tds !== undefined) document.getElementById('current-tds').textContent = Math.round(row.tds);
   if (row.temperature !== undefined) document.getElementById('current-temperature').textContent = `${Number(row.temperature).toFixed(1)}°`;
