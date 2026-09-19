@@ -87,26 +87,6 @@ The project includes `render.yaml` for deployment. First create a GitHub account
 
 The free service can sleep after inactivity and takes a short time to wake up on the next visit. A public deployment is a demo site: do not store personal or sensitive test data in it.
 
-## Suggested team division
-
-| Member | Responsibility |
-|---|---|
-| 1 | ESP32 and sensor wiring/calibration |
-| 2 | Data collection and model training |
-| 3 | Flask website and API |
-| 4 | Testing, report, poster and presentation |
-
 ## Short project explanation
 
 MilkGuard takes three easy-to-measure milk parameters. The frontend sends them to a Python Flask backend. Flask passes the values to a saved Random Forest classification model. The backend returns a Normal/Suspicious screening label, shows it on the page, and saves the test in a small CSV history. In a later hardware version, ESP32 can send the same JSON readings directly to `/predict`.
-
-## Viva points
-
-1. **Why only one model?** One classifier can learn the combined effect of all three sensor readings. Separate models are unnecessary for this binary screening task.
-2. **Why Random Forest?** It is understandable, works with small tabular datasets, and can learn simple non-linear boundaries.
-3. **What are the inputs and output?** Inputs are pH, TDS and temperature; output is Normal or Suspicious.
-4. **What does TDS indicate?** It is an indirect measure related to dissolved solids/conductivity; it is not an adulterant-specific test.
-5. **Why temperature?** Sensor readings and milk handling can vary with temperature, so it adds context.
-6. **What is synthetic data?** Artificial data created from stated assumptions for demonstrating the software pipeline. It is not experimental evidence.
-7. **What is the limitation?** The system cannot name or quantify adulterants and needs labelled, calibrated real samples for validation.
-8. **How will ESP32 connect?** It reads calibrated sensors and sends JSON over Wi-Fi to the Flask `/predict` endpoint.
