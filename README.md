@@ -75,18 +75,6 @@ The response includes the label and its model probability. An optional ESP32 ske
 4. Update `train_model.py` to load that CSV instead of calling `make_demo_data()`.
 5. Retrain, keep a separate test set, and report limitations honestly.
 
-## Make the website public (Render)
-
-The project includes `render.yaml` for deployment. First create a GitHub account and upload this project folder to a new repository (do not upload `.venv`). Then:
-
-1. Sign in to [Render](https://render.com/) using GitHub.
-2. Click **New** → **Web Service** and select the MilkGuard GitHub repository.
-3. Select the **Free** plan and click **Create Web Service**.
-4. Render uses `pip install -r requirements.txt` to build and `gunicorn app:app` to start the app.
-5. When deployment finishes, copy the `https://...onrender.com` URL and share it.
-
-The free service can sleep after inactivity and takes a short time to wake up on the next visit. A public deployment is a demo site: do not store personal or sensitive test data in it.
-
 ## Short project explanation
 
 MilkGuard takes three easy-to-measure milk parameters. The frontend sends them to a Python Flask backend. Flask passes the values to a saved Random Forest classification model. The backend returns a Normal/Suspicious screening label, shows it on the page, and saves the test in a small CSV history. In a later hardware version, ESP32 can send the same JSON readings directly to `/predict`.
