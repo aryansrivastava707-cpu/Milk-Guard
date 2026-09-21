@@ -462,8 +462,12 @@
 
       resetRangeTags();
 
+      // Sample ID hamesha blank rahegi taaki user khud enter kare
+      sampleIdInput.value = "";
+      sampleIdInput.placeholder = "Enter Sample ID (Required)";
+      sampleIdInput.focus();
+
       if (type === 'pure') {
-        sampleIdInput.value = "Pure Milk";
         phInput.value = 6.65;
         tdsInput.value = 310;
         tempInput.value = 26.5;
@@ -473,16 +477,14 @@
         tempTag.innerText = "Safe (\u2264 30\u00B0C)";
       } 
       else if (type === 'curd') {
-        sampleIdInput.value = "Curd";
         phInput.value = 5.80;
         tdsInput.value = 420;
         tempInput.value = 28.0;
 
-        phTag.innerText = "Low pH < 6.40";
+        phTag.innerText = "Low pH < 6.45";
         phTag.className = "range-tag tag-alert";
       } 
       else if (type === 'diluted') {
-        sampleIdInput.value = "Diluted Water";
         phInput.value = 6.60;
         tdsInput.value = 140;
         tempInput.value = 25.0;
@@ -504,41 +506,50 @@
       let sampleName = rawText || "MG-Sample";
 
       try {
+        // High-definition QR download (1000px resolution)
+        const hdQrUrl = qrImg.src.replace(/size=\d+x\d+/, "size=1000x1000");
+
         const img = new Image();
         img.crossOrigin = "anonymous";
-        img.src = qrImg.src;
+        img.src = hdQrUrl;
 
         await new Promise((resolve, reject) => {
           img.onload = resolve;
-          img.onerror = reject;
+          img.onerror = () => {
+            img.src = qrImg.src;
+            img.onload = resolve;
+            img.onerror = reject;
+          };
         });
 
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        const size = 300;
+        // 1000x1000 Ultra-HD resolution
+        const size = 1000;
         canvas.width = size;
         canvas.height = size;
 
-        // Draw QR code base
+        // Anti-aliasing blur off for crystal sharp QR modules
+        ctx.imageSmoothingEnabled = false;
         ctx.drawImage(img, 0, 0, size, size);
 
-        // Center badge for Sample ID
+        // Center stylish badge for Sample ID
         const centerX = size / 2;
         const centerY = size / 2;
 
-        ctx.font = "bold 13px sans-serif";
+        ctx.font = "bold 40px sans-serif";
         const textWidth = ctx.measureText(sampleName).width;
-        const boxWidth = Math.max(textWidth + 18, 70);
-        const boxHeight = 26;
+        const boxWidth = Math.max(textWidth + 50, 220);
+        const boxHeight = 74;
 
         ctx.fillStyle = "#ffffff";
         ctx.strokeStyle = "#1e6b47";
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 6;
 
         ctx.beginPath();
         if (ctx.roundRect) {
-          ctx.roundRect(centerX - boxWidth / 2, centerY - boxHeight / 2, boxWidth, boxHeight, 6);
+          ctx.roundRect(centerX - boxWidth / 2, centerY - boxHeight / 2, boxWidth, boxHeight, 14);
         } else {
           ctx.rect(centerX - boxWidth / 2, centerY - boxHeight / 2, boxWidth, boxHeight);
         }
@@ -559,7 +570,7 @@
         document.body.removeChild(a);
 
       } catch (err) {
-        console.error("Canvas QR download failed:", err);
+        console.error("HD Canvas QR download failed:", err);
         const a = document.createElement("a");
         a.href = qrImg.src;
         a.download = `${sampleName}-QR.png`;
