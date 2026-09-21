@@ -500,28 +500,69 @@
       }
 
       const sampleIdEl = document.getElementById("qr-sample");
-      let filename = "MilkGuard-QR.png";
-      if (sampleIdEl && sampleIdEl.innerText.trim()) {
-        const safeName = sampleIdEl.innerText.replace(/[^a-zA-Z0-9-_]/g, "_");
-        filename = `${safeName}-QR.png`;
-      }
+      let rawText = sampleIdEl ? sampleIdEl.innerText.replace("Sample: ", "").trim() : "SAMPLE";
+      let sampleName = rawText || "MG-Sample";
 
       try {
-        const response = await fetch(qrImg.src);
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = qrImg.src;
+
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const size = 300;
+        canvas.width = size;
+        canvas.height = size;
+
+        // Draw QR code base
+        ctx.drawImage(img, 0, 0, size, size);
+
+        // Center badge for Sample ID
+        const centerX = size / 2;
+        const centerY = size / 2;
+
+        ctx.font = "bold 13px sans-serif";
+        const textWidth = ctx.measureText(sampleName).width;
+        const boxWidth = Math.max(textWidth + 18, 70);
+        const boxHeight = 26;
+
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#1e6b47";
+        ctx.lineWidth = 2.5;
+
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(centerX - boxWidth / 2, centerY - boxHeight / 2, boxWidth, boxHeight, 6);
+        } else {
+          ctx.rect(centerX - boxWidth / 2, centerY - boxHeight / 2, boxWidth, boxHeight);
+        }
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#1e6b47";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(sampleName, centerX, centerY);
+
+        const blobUrl = canvas.toDataURL("image/png");
         const a = document.createElement("a");
         a.href = blobUrl;
-        a.download = filename;
+        a.download = `${sampleName.replace(/[^a-zA-Z0-9-_]/g, "_")}-QR.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
+
       } catch (err) {
+        console.error("Canvas QR download failed:", err);
         const a = document.createElement("a");
         a.href = qrImg.src;
-        a.download = filename;
+        a.download = `${sampleName}-QR.png`;
         a.target = "_blank";
         document.body.appendChild(a);
         a.click();
