@@ -9,7 +9,6 @@ form.addEventListener('submit', async (event) => {
   const tdsVal = document.getElementById('tds').value.trim();
   const tempVal = document.getElementById('temperature').value.trim();
 
-  // Sample ID check
   if (!sampleIdVal) {
     alert("Sample ID daalna zaroori hai!");
     document.getElementById('sample-id').focus();
@@ -84,6 +83,7 @@ if (resetBtn) {
     const qrImage = document.getElementById('qr-image');
     const link = document.getElementById('report-link');
     const downloadBtn = document.getElementById('download-qr-btn');
+    const printBtn = document.getElementById('print-cert-btn');
 
     if (qrPlaceholder) qrPlaceholder.style.display = 'flex';
     if (qrImage) {
@@ -96,6 +96,9 @@ if (resetBtn) {
     }
     if (downloadBtn) {
       downloadBtn.disabled = true;
+    }
+    if (printBtn) {
+      printBtn.disabled = true;
     }
     document.getElementById('qr-sample').textContent = 'Run a test to generate an audit report & QR certificate.';
   });
@@ -117,7 +120,6 @@ async function loadLatestSensorReading() {
 }
 
 function updateDashboard(row) {
-  // Input fields autofill nahi honge taaki boxes blank rahein
   if (row.ph !== undefined) document.getElementById('current-ph').textContent = Number(row.ph).toFixed(2);
   if (row.tds !== undefined) document.getElementById('current-tds').textContent = Math.round(row.tds);
   if (row.temperature !== undefined) document.getElementById('current-temperature').textContent = `${Number(row.temperature).toFixed(1)}°`;
@@ -151,6 +153,7 @@ function showQR(data) {
   const qrImage = document.getElementById('qr-image');
   const link = document.getElementById('report-link');
   const downloadBtn = document.getElementById('download-qr-btn');
+  const printBtn = document.getElementById('print-cert-btn');
   
   if (qrPlaceholder) qrPlaceholder.style.display = 'none';
   if (qrImage) {
@@ -166,6 +169,9 @@ function showQR(data) {
   }
   if (downloadBtn) {
     downloadBtn.disabled = false;
+  }
+  if (printBtn) {
+    printBtn.disabled = false;
   }
 }
 
