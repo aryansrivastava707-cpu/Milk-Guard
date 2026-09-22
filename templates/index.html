@@ -291,6 +291,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .table-container {
       width: 100%;
@@ -315,6 +317,7 @@
       border-bottom: 1px solid #f1f5f9;
       color: #1e293b;
       white-space: nowrap;
+      vertical-align: middle;
     }
     .history-badge {
       display: inline-block;
@@ -330,6 +333,38 @@
     .badge-fail {
       background: #ffe3e3;
       color: #d90429;
+    }
+    .btn-row-pdf {
+      padding: 4px 9px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: #1e6b47;
+      background: #ebfbee;
+      border: 1px solid #b7dfc9;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-row-pdf:hover {
+      background: #1e6b47;
+      color: #ffffff;
+    }
+    .btn-table-pdf {
+      background: #1e6b47;
+      color: #ffffff;
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s;
+    }
+    .btn-table-pdf:hover {
+      background: #165436;
     }
   </style>
 </head>
@@ -495,11 +530,16 @@
           <span class="eyebrow" style="color:#2b7a54; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Audit Trail</span>
           <h2 style="font-size:1.3rem; font-weight:700; color:#1a2b21; margin:2px 0 0 0;">Recent Tests</h2>
         </div>
-        <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px;">Live Records</span>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button type="button" class="btn-table-pdf" onclick="generateAuditLogPDF()">
+            📄 Download Table PDF
+          </button>
+          <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:5px 10px; border-radius:6px;">Live Records</span>
+        </div>
       </div>
 
       <div class="table-container">
-        <table class="history-table">
+        <table class="history-table" id="audit-table">
           <thead>
             <tr>
               <th>Sample ID</th>
@@ -509,11 +549,12 @@
               <th>Status</th>
               <th>Risk Score</th>
               <th>Test Time</th>
+              <th style="text-align: center;">Action</th>
             </tr>
           </thead>
           <tbody id="history-tbody">
             <tr id="empty-history-row">
-              <td colspan="7" style="text-align: center; color: #94a3b8; padding: 20px;">No tests recorded yet. Run a sample test above!</td>
+              <td colspan="8" style="text-align: center; color: #94a3b8; padding: 20px;">No tests recorded yet. Run a sample test above!</td>
             </tr>
           </tbody>
         </table>
@@ -818,6 +859,202 @@
             window.onload = function() {
               window.print();
             };
+          <\/script>
+        </body>
+        </html>
+      `;
+
+      printWindow.document.open();
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+    }
+
+    function generateAuditLogPDF() {
+      const tbody = document.getElementById("history-tbody");
+      if (!tbody || tbody.querySelector("#empty-history-row") || tbody.children.length === 0) {
+        alert("Table me koi test record nahi hai print karne ke liye!");
+        return;
+      }
+
+      // Clone table and remove the Action column for clean printing
+      const rows = tbody.querySelectorAll("tr");
+      let tableRowsHtml = "";
+      rows.forEach(tr => {
+        const tds = tr.querySelectorAll("td");
+        if (tds.length >= 7) {
+          tableRowsHtml += `
+            <tr>
+              <td><strong>${tds[0].innerText}</strong></td>
+              <td>${tds[1].innerText}</td>
+              <td>${tds[2].innerText}</td>
+              <td>${tds[3].innerText}</td>
+              <td>${tds[4].innerText}</td>
+              <td>${tds[5].innerText}</td>
+              <td>${tds[6].innerText}</td>
+            </tr>
+          `;
+        }
+      });
+
+      const printWindow = window.open("", "_blank", "width=900,height=800");
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>MilkGuard - Recent Tests Audit Log</title>
+          <style>
+            body { font-family: 'Segoe UI', Arial, sans-serif; padding: 35px; color: #1e293b; background: #fff; margin: 0; }
+            .header { border-bottom: 2px solid #1e6b47; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+            .header h1 { margin: 0; color: #1e6b47; font-size: 22px; }
+            .header p { margin: 4px 0 0; color: #64748b; font-size: 13px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+            th, td { border: 1px solid #cbd5e1; padding: 9px 12px; text-align: left; }
+            th { background: #f1f5f9; color: #334155; font-weight: 700; }
+            tr:nth-child(even) { background: #f8fafc; }
+            .footer { margin-top: 30px; font-size: 12px; color: #64748b; display: flex; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+            @media print { body { padding: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <h1>🥛 MILKGUARD DAIRY SCREENING AUDIT TRAIL</h1>
+              <p>Certified Multi-Sensor Historical Screening Summary Log</p>
+            </div>
+            <div style="text-align: right; font-size: 12px; color: #475569;">
+              Generated on: ${new Date().toLocaleString()}
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Sample ID</th>
+                <th>pH Level</th>
+                <th>TDS (ppm)</th>
+                <th>Temp (°C)</th>
+                <th>Status</th>
+                <th>Risk Score</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRowsHtml}
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <span>Verified by MilkGuard IoT-AI System</span>
+            <span>Confidential & Certified Quality Record</span>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          <\/script>
+        </body>
+        </html>
+      `;
+
+      printWindow.document.open();
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+    }
+
+    function printSingleRowPDF(sampleId, ph, tds, temp, result, risk, time) {
+      const isSuspicious = result === 'SUSPICIOUS';
+      const badgeColor = isSuspicious ? "#d90429" : "#1e6b47";
+      const badgeText = isSuspicious ? "FAILED / SUSPICIOUS" : "PASSED / PURE MILK";
+
+      const printWindow = window.open("", "_blank", "width=850,height=800");
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>MilkGuard Certificate - ${sampleId}</title>
+          <style>
+            body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #222; margin: 0; padding: 40px; }
+            .cert-border { border: 3px double #1e6b47; padding: 30px; border-radius: 8px; position: relative; background: #fafdfb; }
+            .header { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px; }
+            .header h1 { margin: 0; color: #1e6b47; font-size: 24px; letter-spacing: 1.2px; text-transform: uppercase; }
+            .header p { margin: 5px 0 0; color: #526359; font-size: 13px; font-weight: 500; }
+            .meta-grid { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13.5px; }
+            .badge { display: inline-block; padding: 7px 20px; color: #fff; background: ${badgeColor}; font-weight: 700; border-radius: 6px; font-size: 15px; margin: 10px 0 20px; }
+            table { width: 100%; border-collapse: collapse; margin: 15px 0 25px; font-size: 13.5px; background: #fff; }
+            th, td { border: 1px solid #d7e2dc; padding: 10px 14px; text-align: left; }
+            th { background: #f0f6f2; color: #21382b; font-weight: 600; }
+            .seal-wrapper { text-align: right; margin-top: 25px; }
+            .official-seal {
+              display: inline-flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              width: 140px;
+              height: 140px;
+              border: 3px dashed #1e6b47;
+              border-radius: 50%;
+              padding: 6px;
+              box-sizing: border-box;
+              background: #ffffff;
+            }
+            .seal-inner {
+              border: 1.5px solid #1e6b47;
+              border-radius: 50%;
+              width: 100%;
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              box-sizing: border-box;
+            }
+            .seal-icon { font-size: 18px; color: #1e6b47; margin-bottom: 2px; }
+            .seal-title { font-size: 10px; font-weight: 800; color: #1e6b47; text-transform: uppercase; }
+            .seal-status { font-size: 8px; font-weight: 700; color: #3b5245; margin-top: 2px; }
+            @media print { body { padding: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="cert-border">
+            <div class="header">
+              <h1>MILKGUARD QUALITY ASSURANCE</h1>
+              <p>Automated Digital Milk Screening & Adulteration Audit Certificate</p>
+            </div>
+            <div class="meta-grid">
+              <div>
+                <strong>Sample ID:</strong> ${sampleId}<br>
+                <strong>Test Time:</strong> ${time}
+              </div>
+              <div style="text-align: right;">
+                <strong>Screening Score:</strong> ${risk}% Risk
+              </div>
+            </div>
+            <div style="text-align: center;">
+              <div class="badge">${badgeText}</div>
+            </div>
+            <table>
+              <thead>
+                <tr><th>Parameter</th><th>Observed Value</th><th>Standard Limit</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>pH Level</strong></td><td>${ph} pH</td><td>6.45 - 6.85 pH</td><td>${(ph >= 6.45 && ph <= 6.85) ? '✓ Normal' : '⚠ Alert'}</td></tr>
+                <tr><td><strong>TDS</strong></td><td>${tds} ppm</td><td>220 - 580 ppm</td><td>${(tds >= 220 && tds <= 580) ? '✓ Normal' : '⚠ Alert'}</td></tr>
+                <tr><td><strong>Temperature</strong></td><td>${temp} °C</td><td>≤ 30.0 °C</td><td>${temp <= 30.0 ? '✓ Safe' : '⚠ Alert'}</td></tr>
+              </tbody>
+            </table>
+            <div class="seal-wrapper">
+              <div class="official-seal">
+                <div class="seal-inner">
+                  <span class="seal-icon">✓</span>
+                  <span class="seal-title">QUALITY ASSURED</span>
+                  <span class="seal-status">LAB VERIFIED</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <script>
+            window.onload = function() { window.print(); };
           <\/script>
         </body>
         </html>
