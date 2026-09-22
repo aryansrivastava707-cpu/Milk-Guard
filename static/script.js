@@ -49,7 +49,7 @@ form.addEventListener('submit', async (event) => {
     time: testTimeStr
   });
 
-  // Table me real-time naya test record add karo
+  // Table me real-time naya test record add karo jisme per-row PDF action button ho
   appendRecentTestRow({
     sample_id: data.sample_id,
     ph: data.ph,
@@ -129,22 +129,31 @@ function appendRecentTestRow(record) {
   const badgeClass = isPass ? 'badge-pass' : 'badge-fail';
   const badgeText = isPass ? 'PURE MILK' : 'SUSPICIOUS';
 
+  const phVal = Number(record.ph).toFixed(2);
+  const tdsVal = Math.round(record.tds);
+  const tempVal = Number(record.temperature).toFixed(1);
+  const riskVal = record.suspicious_probability;
+  const timeVal = record.time || 'Just now';
+
   const tr = document.createElement('tr');
   tr.innerHTML = `
     <td><strong>${record.sample_id}</strong></td>
-    <td>${Number(record.ph).toFixed(2)}</td>
-    <td>${Math.round(record.tds)}</td>
-    <td>${Number(record.temperature).toFixed(1)}°C</td>
+    <td>${phVal}</td>
+    <td>${tdsVal}</td>
+    <td>${tempVal}°C</td>
     <td><span class="history-badge ${badgeClass}">${badgeText}</span></td>
-    <td><strong>${record.suspicious_probability}%</strong></td>
-    <td style="color:#64748b; font-size:0.82rem;">${record.time || 'Just now'}</td>
+    <td><strong>${riskVal}%</strong></td>
+    <td style="color:#64748b; font-size:0.82rem;">${timeVal}</td>
+    <td style="text-align: center;">
+      <button type="button" class="btn-row-pdf" onclick="printSingleRowPDF('${record.sample_id}', ${phVal}, ${tdsVal}, ${tempVal}, '${record.result}', ${riskVal}, '${timeVal}')">
+        📄 PDF
+      </button>
+    </td>
   `;
 
-  // Sabse naya test upar insert hoga
   tbody.insertBefore(tr, tbody.firstChild);
 
-  // Table me max 8 rows preserve karein
-  if (tbody.children.length > 8) {
+  if (tbody.children.length > 10) {
     tbody.removeChild(tbody.lastChild);
   }
 }
