@@ -594,7 +594,7 @@
       const scoreVal = document.getElementById("score-value").innerText;
       const isSuspicious = statusVal.includes("SUSPICIOUS");
 
-      const badgeColor = isSuspicious ? "#d90429" : "#2b9348";
+      const badgeColor = isSuspicious ? "#d90429" : "#1e6b47";
       const badgeText = isSuspicious ? "FAILED / SUSPICIOUS" : "PASSED / PURE MILK";
       const testDate = new Date().toLocaleString();
 
@@ -606,28 +606,60 @@
           <title>MilkGuard Certificate - ${sampleId}</title>
           <style>
             body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #222; margin: 0; padding: 40px; }
-            .cert-border { border: 4px double #1e6b47; padding: 30px; border-radius: 8px; position: relative; }
+            .cert-border { border: 3px double #1e6b47; padding: 30px; border-radius: 8px; position: relative; background: #fafdfb; }
             .header { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px; }
-            .header h1 { margin: 0; color: #1e6b47; font-size: 26px; letter-spacing: 1px; }
-            .header p { margin: 4px 0 0; color: #64748b; font-size: 13px; }
-            .meta-grid { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; }
-            .badge { display: inline-block; padding: 8px 18px; color: #fff; background: ${badgeColor}; font-weight: bold; border-radius: 6px; font-size: 16px; margin: 15px 0; }
-            table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
-            th, td { border: 1px solid #cbd5e1; padding: 10px 14px; text-align: left; }
-            th { background: #f8fafc; color: #334155; }
-            .footer-sec { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+            .header h1 { margin: 0; color: #1e6b47; font-size: 24px; letter-spacing: 1.2px; text-transform: uppercase; }
+            .header p { margin: 5px 0 0; color: #526359; font-size: 13px; font-weight: 500; }
+            .meta-grid { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13.5px; }
+            .badge { display: inline-block; padding: 7px 20px; color: #fff; background: ${badgeColor}; font-weight: 700; border-radius: 6px; font-size: 15px; margin: 10px 0 20px; letter-spacing: 0.5px; }
+            table { width: 100%; border-collapse: collapse; margin: 15px 0 25px; font-size: 13.5px; background: #fff; }
+            th, td { border: 1px solid #d7e2dc; padding: 10px 14px; text-align: left; }
+            th { background: #f0f6f2; color: #21382b; font-weight: 600; }
+            .footer-sec { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 25px; padding-top: 15px; border-top: 1px solid #dce6e0; }
             .qr-sec { text-align: center; }
-            .qr-sec img { width: 130px; height: 130px; border: 1px solid #cbd5e1; padding: 4px; border-radius: 6px; }
-            .qr-sec small { display: block; color: #64748b; font-size: 11px; margin-top: 4px; }
-            .stamp-sec { text-align: right; }
-            .stamp-box { border: 2px dashed #94a3b8; padding: 12px 24px; border-radius: 8px; display: inline-block; color: #475569; font-weight: bold; font-size: 12px; }
+            .qr-sec img { width: 125px; height: 125px; border: 1px solid #cbd5e1; padding: 4px; border-radius: 6px; background: #fff; }
+            .qr-sec small { display: block; color: #64748b; font-size: 11px; margin-top: 4px; font-weight: 600; }
+            
+            /* Professional Quality Assurance Seal */
+            .seal-wrapper { text-align: right; }
+            .official-seal {
+              display: inline-flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              width: 145px;
+              height: 145px;
+              border: 3px dashed #1e6b47;
+              border-radius: 50%;
+              padding: 6px;
+              box-sizing: border-box;
+              text-align: center;
+              background: #ffffff;
+            }
+            .seal-inner {
+              border: 1.5px solid #1e6b47;
+              border-radius: 50%;
+              width: 100%;
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              padding: 4px;
+              box-sizing: border-box;
+            }
+            .seal-icon { font-size: 18px; color: #1e6b47; line-height: 1; margin-bottom: 2px; }
+            .seal-title { font-size: 10px; font-weight: 800; color: #1e6b47; letter-spacing: 0.8px; text-transform: uppercase; line-height: 1.2; }
+            .seal-status { font-size: 8px; font-weight: 700; color: #3b5245; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+            .seal-sub { font-size: 7.5px; color: #6f8578; margin-top: 2px; }
+            
             @media print { body { padding: 0; } }
           </style>
         </head>
         <body>
           <div class="cert-border">
             <div class="header">
-              <h1>🥛 MILKGUARD QUALITY ASSURANCE</h1>
+              <h1>MILKGUARD QUALITY ASSURANCE</h1>
               <p>Automated Digital Milk Screening & Adulteration Audit Certificate</p>
             </div>
 
@@ -682,10 +714,15 @@
                 <img src="${qrImg.src}" alt="Certificate QR">
                 <small>Scan to verify original record</small>
               </div>
-              <div class="stamp-sec">
-                <div class="stamp-box">
-                  DIGITALLY VERIFIED<br>
-                  MILKGUARD AI AUDIT
+
+              <div class="seal-wrapper">
+                <div class="official-seal">
+                  <div class="seal-inner">
+                    <span class="seal-icon">✓</span>
+                    <span class="seal-title">QUALITY ASSURED</span>
+                    <span class="seal-status">LAB VERIFIED</span>
+                    <span class="seal-sub">DAIRY SCREENING</span>
+                  </div>
                 </div>
               </div>
             </div>
