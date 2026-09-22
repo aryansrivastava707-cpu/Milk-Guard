@@ -149,6 +149,39 @@
     .badge-left { margin-right: 8px; }
     .badge-right { margin-left: 8px; }
 
+    /* Visual Range Gauge Styles */
+    .gauge-track {
+      position: relative;
+      height: 6px;
+      border-radius: 4px;
+      margin-top: 4px;
+      width: 100%;
+      background: #e2e8f0;
+      overflow: visible;
+    }
+    .gauge-ph {
+      background: linear-gradient(to right, #e63946 0%, #e63946 42%, #2a9d8f 45%, #2a9d8f 55%, #e63946 58%, #e63946 100%);
+    }
+    .gauge-tds {
+      background: linear-gradient(to right, #e63946 0%, #e63946 22%, #2a9d8f 24%, #2a9d8f 58%, #e63946 62%, #e63946 100%);
+    }
+    .gauge-temp {
+      background: linear-gradient(to right, #2a9d8f 0%, #2a9d8f 50%, #e63946 55%, #e63946 100%);
+    }
+    .gauge-pin {
+      position: absolute;
+      top: -3px;
+      width: 12px;
+      height: 12px;
+      background: #ffffff;
+      border: 2.5px solid #1a2b21;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      transform: translateX(-50%);
+      transition: left 0.25s ease-out, border-color 0.2s ease;
+      display: none;
+    }
+
     .form-buttons {
       display: flex !important;
       flex-direction: row !important;
@@ -366,7 +399,10 @@
               </label>
               <div class="custom-input">
                 <span class="input-badge badge-left">pH</span>
-                <input id="ph" type="number" step="0.01" min="0" max="14" placeholder="6.65" required>
+                <input id="ph" type="number" step="0.01" min="0" max="14" placeholder="6.65" required oninput="updateVisualGauges()">
+              </div>
+              <div class="gauge-track gauge-ph">
+                <div id="ph-pin" class="gauge-pin"></div>
               </div>
             </div>
 
@@ -376,8 +412,11 @@
                 <span id="tds-tag" class="range-tag tag-normal">220 - 580 ppm</span>
               </label>
               <div class="custom-input">
-                <input id="tds" type="number" step="1" min="0" placeholder="310" required>
+                <input id="tds" type="number" step="1" min="0" placeholder="310" required oninput="updateVisualGauges()">
                 <span class="input-badge badge-right">ppm</span>
+              </div>
+              <div class="gauge-track gauge-tds">
+                <div id="tds-pin" class="gauge-pin"></div>
               </div>
             </div>
 
@@ -387,8 +426,11 @@
                 <span id="temp-tag" class="range-tag tag-normal">&le; 30°C</span>
               </label>
               <div class="custom-input">
-                <input id="temperature" type="number" step="0.1" placeholder="27.0" required>
+                <input id="temperature" type="number" step="0.1" placeholder="27.0" required oninput="updateVisualGauges()">
                 <span class="input-badge badge-right">°C</span>
+              </div>
+              <div class="gauge-track gauge-temp">
+                <div id="temp-pin" class="gauge-pin"></div>
               </div>
             </div>
 
@@ -438,6 +480,74 @@
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
+    function updateVisualGauges() {
+      const phVal = parseFloat(document.getElementById("ph").value);
+      const tdsVal = parseFloat(document.getElementById("tds").value);
+      const tempVal = parseFloat(document.getElementById("temperature").value);
+
+      const phPin = document.getElementById("ph-pin");
+      const tdsPin = document.getElementById("tds-pin");
+      const tempPin = document.getElementById("temp-pin");
+
+      const phTag = document.getElementById("ph-tag");
+      const tdsTag = document.getElementById("tds-tag");
+      const tempTag = document.getElementById("temp-tag");
+
+      // pH Gauge (Range 4.0 - 9.0 display)
+      if (!isNaN(phVal)) {
+        let percent = ((phVal - 4.0) / (9.0 - 4.0)) * 100;
+        percent = Math.max(0, Math.min(100, percent));
+        phPin.style.display = "block";
+        phPin.style.left = percent + "%";
+
+        if (phVal >= 6.45 && phVal <= 6.85) {
+          phPin.style.borderColor = "#2a9d8f";
+          phTag.className = "range-tag tag-normal";
+          phTag.innerText = "Normal (6.45 - 6.85)";
+        } else {
+          phPin.style.borderColor = "#e63946";
+          phTag.className = "range-tag tag-alert";
+          phTag.innerText = phVal < 6.45 ? "Low pH" : "High pH";
+        }
+      }
+
+      // TDS Gauge (Range 0 - 1000 ppm display)
+      if (!isNaN(tdsVal)) {
+        let percent = (tdsVal / 1000) * 100;
+        percent = Math.max(0, Math.min(100, percent));
+        tdsPin.style.display = "block";
+        tdsPin.style.left = percent + "%";
+
+        if (tdsVal >= 220 && tdsVal <= 580) {
+          tdsPin.style.borderColor = "#2a9d8f";
+          tdsTag.className = "range-tag tag-normal";
+          tdsTag.innerText = "Normal (220 - 580)";
+        } else {
+          tdsPin.style.borderColor = "#e63946";
+          tdsTag.className = "range-tag tag-alert";
+          tdsTag.innerText = tdsVal < 220 ? "Low TDS" : "High TDS";
+        }
+      }
+
+      // Temp Gauge (Range 10 - 50°C display)
+      if (!isNaN(tempVal)) {
+        let percent = ((tempVal - 10) / (50 - 10)) * 100;
+        percent = Math.max(0, Math.min(100, percent));
+        tempPin.style.display = "block";
+        tempPin.style.left = percent + "%";
+
+        if (tempVal <= 30.0) {
+          tempPin.style.borderColor = "#2a9d8f";
+          tempTag.className = "range-tag tag-normal";
+          tempTag.innerText = "Safe (\u2264 30\u00B0C)";
+        } else {
+          tempPin.style.borderColor = "#e63946";
+          tempTag.className = "range-tag tag-alert";
+          tempTag.innerText = "High Temp";
+        }
+      }
+    }
+
     function resetRangeTags() {
       const phTag = document.getElementById("ph-tag");
       const tdsTag = document.getElementById("tds-tag");
@@ -451,6 +561,10 @@
 
       tempTag.innerText = "\u2264 30\u00B0C";
       tempTag.className = "range-tag tag-normal";
+
+      document.getElementById("ph-pin").style.display = "none";
+      document.getElementById("tds-pin").style.display = "none";
+      document.getElementById("temp-pin").style.display = "none";
     }
 
     function loadPreset(type) {
@@ -458,10 +572,6 @@
       const tdsInput = document.getElementById("tds");
       const tempInput = document.getElementById("temperature");
       const sampleIdInput = document.getElementById("sample-id");
-
-      const phTag = document.getElementById("ph-tag");
-      const tdsTag = document.getElementById("tds-tag");
-      const tempTag = document.getElementById("temp-tag");
 
       resetRangeTags();
 
@@ -473,27 +583,19 @@
         phInput.value = 6.65;
         tdsInput.value = 310;
         tempInput.value = 26.5;
-
-        phTag.innerText = "Normal (6.45 - 6.85)";
-        tdsTag.innerText = "Normal (220 - 580)";
-        tempTag.innerText = "Safe (\u2264 30\u00B0C)";
       } 
       else if (type === 'curd') {
         phInput.value = 5.80;
         tdsInput.value = 420;
         tempInput.value = 28.0;
-
-        phTag.innerText = "Low pH < 6.45";
-        phTag.className = "range-tag tag-alert";
       } 
       else if (type === 'diluted') {
         phInput.value = 6.60;
         tdsInput.value = 140;
         tempInput.value = 25.0;
-
-        tdsTag.innerText = "Low TDS < 220";
-        tdsTag.className = "range-tag tag-alert";
       }
+
+      updateVisualGauges();
     }
 
     async function downloadQRCode() {
@@ -620,7 +722,6 @@
             .qr-sec img { width: 125px; height: 125px; border: 1px solid #cbd5e1; padding: 4px; border-radius: 6px; background: #fff; }
             .qr-sec small { display: block; color: #64748b; font-size: 11px; margin-top: 4px; font-weight: 600; }
             
-            /* Professional Quality Assurance Seal */
             .seal-wrapper { text-align: right; }
             .official-seal {
               display: inline-flex;
