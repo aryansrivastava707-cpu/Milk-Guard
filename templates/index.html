@@ -416,6 +416,9 @@
           <button type="button" id="download-qr-btn" class="btn-download" onclick="downloadQRCode()" disabled>
             ⬇ Download QR Code
           </button>
+          <button type="button" id="print-cert-btn" class="btn-download" onclick="generatePDFCertificate()" disabled style="background-color: #1e6b47;">
+            📄 Print / Save PDF Certificate
+          </button>
         </div>
       </div>
 
@@ -462,7 +465,6 @@
 
       resetRangeTags();
 
-      // Sample ID hamesha blank rahegi taaki user khud enter kare
       sampleIdInput.value = "";
       sampleIdInput.placeholder = "Enter Sample ID (Required)";
       sampleIdInput.focus();
@@ -506,7 +508,6 @@
       let sampleName = rawText || "MG-Sample";
 
       try {
-        // High-definition QR download (1000px resolution)
         const hdQrUrl = qrImg.src.replace(/size=\d+x\d+/, "size=1000x1000");
 
         const img = new Image();
@@ -525,16 +526,13 @@
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        // 1000x1000 Ultra-HD resolution
         const size = 1000;
         canvas.width = size;
         canvas.height = size;
 
-        // Anti-aliasing blur off for crystal sharp QR modules
         ctx.imageSmoothingEnabled = false;
         ctx.drawImage(img, 0, 0, size, size);
 
-        // Center stylish badge for Sample ID
         const centerX = size / 2;
         const centerY = size / 2;
 
@@ -579,6 +577,131 @@
         a.click();
         document.body.removeChild(a);
       }
+    }
+
+    function generatePDFCertificate() {
+      const qrImg = document.getElementById("qr-image");
+      if (!qrImg || qrImg.style.display === "none" || !qrImg.src) {
+        alert("Please analyze a milk sample first to generate the certificate!");
+        return;
+      }
+
+      const sampleId = (document.getElementById("qr-sample").innerText.replace("Sample: ", "") || "MG-Sample").trim();
+      const phVal = document.getElementById("current-ph").innerText;
+      const tdsVal = document.getElementById("current-tds").innerText;
+      const tempVal = document.getElementById("current-temperature").innerText;
+      const statusVal = document.getElementById("status").innerText;
+      const scoreVal = document.getElementById("score-value").innerText;
+      const isSuspicious = statusVal.includes("SUSPICIOUS");
+
+      const badgeColor = isSuspicious ? "#d90429" : "#2b9348";
+      const badgeText = isSuspicious ? "FAILED / SUSPICIOUS" : "PASSED / PURE MILK";
+      const testDate = new Date().toLocaleString();
+
+      const printWindow = window.open("", "_blank", "width=850,height=900");
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>MilkGuard Certificate - ${sampleId}</title>
+          <style>
+            body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #222; margin: 0; padding: 40px; }
+            .cert-border { border: 4px double #1e6b47; padding: 30px; border-radius: 8px; position: relative; }
+            .header { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px; }
+            .header h1 { margin: 0; color: #1e6b47; font-size: 26px; letter-spacing: 1px; }
+            .header p { margin: 4px 0 0; color: #64748b; font-size: 13px; }
+            .meta-grid { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; }
+            .badge { display: inline-block; padding: 8px 18px; color: #fff; background: ${badgeColor}; font-weight: bold; border-radius: 6px; font-size: 16px; margin: 15px 0; }
+            table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+            th, td { border: 1px solid #cbd5e1; padding: 10px 14px; text-align: left; }
+            th { background: #f8fafc; color: #334155; }
+            .footer-sec { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+            .qr-sec { text-align: center; }
+            .qr-sec img { width: 130px; height: 130px; border: 1px solid #cbd5e1; padding: 4px; border-radius: 6px; }
+            .qr-sec small { display: block; color: #64748b; font-size: 11px; margin-top: 4px; }
+            .stamp-sec { text-align: right; }
+            .stamp-box { border: 2px dashed #94a3b8; padding: 12px 24px; border-radius: 8px; display: inline-block; color: #475569; font-weight: bold; font-size: 12px; }
+            @media print { body { padding: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="cert-border">
+            <div class="header">
+              <h1>🥛 MILKGUARD QUALITY ASSURANCE</h1>
+              <p>Automated Digital Milk Screening & Adulteration Audit Certificate</p>
+            </div>
+
+            <div class="meta-grid">
+              <div>
+                <strong>Sample ID:</strong> ${sampleId}<br>
+                <strong>Test Date & Time:</strong> ${testDate}
+              </div>
+              <div style="text-align: right;">
+                <strong>Verification Protocol:</strong> Multi-Sensor Array<br>
+                <strong>Screening Score:</strong> ${scoreVal}
+              </div>
+            </div>
+
+            <div style="text-align: center;">
+              <div class="badge">${badgeText}</div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Tested Parameter</th>
+                  <th>Observed Value</th>
+                  <th>Standard Safe Limits</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>pH Level</strong></td>
+                  <td>${phVal} pH</td>
+                  <td>6.45 - 6.85 pH</td>
+                  <td>${(parseFloat(phVal) >= 6.45 && parseFloat(phVal) <= 6.85) ? '✓ Normal' : '⚠ Out of Range'}</td>
+                </tr>
+                <tr>
+                  <td><strong>TDS / Conductivity</strong></td>
+                  <td>${tdsVal} ppm</td>
+                  <td>220 - 580 ppm</td>
+                  <td>${(parseFloat(tdsVal) >= 220 && parseFloat(tdsVal) <= 580) ? '✓ Normal' : '⚠ Out of Range'}</td>
+                </tr>
+                <tr>
+                  <td><strong>Temperature</strong></td>
+                  <td>${tempVal} °C</td>
+                  <td>≤ 30.0 °C</td>
+                  <td>${parseFloat(tempVal) <= 30.0 ? '✓ Safe' : '⚠ Cold-Chain Alert'}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="footer-sec">
+              <div class="qr-sec">
+                <img src="${qrImg.src}" alt="Certificate QR">
+                <small>Scan to verify original record</small>
+              </div>
+              <div class="stamp-sec">
+                <div class="stamp-box">
+                  DIGITALLY VERIFIED<br>
+                  MILKGUARD AI AUDIT
+                </div>
+              </div>
+            </div>
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          <\/script>
+        </body>
+        </html>
+      `;
+
+      printWindow.document.open();
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
     }
   </script>
 </body>
