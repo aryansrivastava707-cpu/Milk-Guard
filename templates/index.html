@@ -275,6 +275,62 @@
       border: 1px solid #dcdfe3;
       object-fit: contain;
     }
+
+    /* History Table Styles */
+    .history-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+      border: 1px solid #eef2ef;
+      margin-top: 24px;
+      margin-bottom: 24px;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    .history-table th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap;
+    }
+    .history-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b;
+      white-space: nowrap;
+    }
+    .history-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-radius: 4px;
+    }
+    .badge-pass {
+      background: #ebfbee;
+      color: #1e6b47;
+    }
+    .badge-fail {
+      background: #ffe3e3;
+      color: #d90429;
+    }
   </style>
 </head>
 <body>
@@ -429,6 +485,38 @@
           <span class="qr-placeholder-sub">Test a sample</span>
         </div>
         <img id="qr-image" alt="QR Code" style="display: none;">
+      </div>
+    </section>
+
+    <!-- Recent Tests Live History Table Section -->
+    <section class="card history-card">
+      <div class="history-header">
+        <div>
+          <span class="eyebrow" style="color:#2b7a54; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Audit Trail</span>
+          <h2 style="font-size:1.3rem; font-weight:700; color:#1a2b21; margin:2px 0 0 0;">Recent Tests</h2>
+        </div>
+        <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px;">Live Records</span>
+      </div>
+
+      <div class="table-container">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Sample ID</th>
+              <th>pH Level</th>
+              <th>TDS (ppm)</th>
+              <th>Temp (°C)</th>
+              <th>Status</th>
+              <th>Risk Score</th>
+              <th>Test Time</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <tr id="empty-history-row">
+              <td colspan="7" style="text-align: center; color: #94a3b8; padding: 20px;">No tests recorded yet. Run a sample test above!</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -620,7 +708,6 @@
             .qr-sec img { width: 125px; height: 125px; border: 1px solid #cbd5e1; padding: 4px; border-radius: 6px; background: #fff; }
             .qr-sec small { display: block; color: #64748b; font-size: 11px; margin-top: 4px; font-weight: 600; }
             
-            /* Professional Quality Assurance Seal */
             .seal-wrapper { text-align: right; }
             .official-seal {
               display: inline-flex;
