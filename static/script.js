@@ -38,14 +38,28 @@ form.addEventListener('submit', async (event) => {
     alert(data.error); 
     return; 
   }
+
+  const testTimeStr = new Date().toLocaleTimeString();
   
   updateDashboard({
     ...readings, 
     result: data.result, 
     suspicious_probability: data.suspicious_probability, 
     reason: data.reason,
-    time: 'Manual test'
+    time: testTimeStr
   });
+
+  // Table me real-time naya test record add karo
+  appendRecentTestRow({
+    sample_id: data.sample_id,
+    ph: data.ph,
+    tds: data.tds,
+    temperature: data.temperature,
+    result: data.result,
+    suspicious_probability: data.suspicious_probability,
+    time: testTimeStr
+  });
+
   showQR(data);
 });
 
@@ -104,6 +118,37 @@ if (resetBtn) {
   });
 }
 
+function appendRecentTestRow(record) {
+  const tbody = document.getElementById('history-tbody');
+  const emptyRow = document.getElementById('empty-history-row');
+  if (emptyRow) {
+    emptyRow.remove();
+  }
+
+  const isPass = record.result === 'NORMAL';
+  const badgeClass = isPass ? 'badge-pass' : 'badge-fail';
+  const badgeText = isPass ? 'PURE MILK' : 'SUSPICIOUS';
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><strong>${record.sample_id}</strong></td>
+    <td>${Number(record.ph).toFixed(2)}</td>
+    <td>${Math.round(record.tds)}</td>
+    <td>${Number(record.temperature).toFixed(1)}°C</td>
+    <td><span class="history-badge ${badgeClass}">${badgeText}</span></td>
+    <td><strong>${record.suspicious_probability}%</strong></td>
+    <td style="color:#64748b; font-size:0.82rem;">${record.time || 'Just now'}</td>
+  `;
+
+  // Sabse naya test upar insert hoga
+  tbody.insertBefore(tr, tbody.firstChild);
+
+  // Table me max 8 rows preserve karein
+  if (tbody.children.length > 8) {
+    tbody.removeChild(tbody.lastChild);
+  }
+}
+
 async function loadLatestSensorReading() {
   try {
     const response = await fetch('/latest');
@@ -115,6 +160,7 @@ async function loadLatestSensorReading() {
         sample_id: row.sample_id,
         report_url: `${window.location.origin}/report/${row.test_id}`
       });
+      appendRecentTestRow(row);
     }
   } catch (err) {}
 }
