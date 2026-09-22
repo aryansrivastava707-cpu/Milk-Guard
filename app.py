@@ -39,7 +39,6 @@ def calculate_gradual_risk(ph, tds, temperature):
     temp_risk = 0.0
 
     # pH Risk (Standard: 6.45 to 6.85)
-    # 0.1 badhne par smooth ~15% increase hoga, seedha 85% nahi
     if ph < 6.45:
         deviation = 6.45 - ph
         ph_risk = min(deviation / (6.45 - 5.00) * 100.0, 100.0)
@@ -123,18 +122,14 @@ def predict():
         if temperature > 30.0:
             reasons.append(f"High Temperature ({temperature:.1f}°C) - Cold chain breakdown")
 
-        # Gradual risk calculation
         heuristic_prob = calculate_gradual_risk(ph, tds, temperature)
 
-        # Baseline noise (4% to 6%)
+        # Baseline noise ko 0% set kar diya agar saare parameters normal hon
         if len(reasons) == 0:
-            probability = 0.04
+            probability = 0.0
         else:
-            # Halki si deviation pe minimum realistic risk 15% se start hoga
             probability = max(0.15, heuristic_prob)
 
-        # Result decision
-        # 45% se kam risk pe PURE/NORMAL dikhayega, usse upar pe SUSPICIOUS
         if probability < 0.45:
             result = "NORMAL"
             if len(reasons) == 0:
