@@ -7,17 +7,17 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
     .reading-card {
-      background: #132219;
+      background: var(--card-bg);
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-      border: 1px solid #1f3d2b;
+      box-shadow: 0 4px 18px var(--shadow-color);
+      border: 1px solid var(--border-color);
       margin-bottom: 24px;
     }
     .manual-panel summary {
       cursor: pointer;
       font-weight: 600;
-      color: #2ecc71;
+      color: var(--accent-green);
       margin-bottom: 16px;
       user-select: none;
       outline: none;
@@ -26,7 +26,7 @@
       gap: 6px;
     }
     .manual-panel summary small {
-      color: #728c7d;
+      color: var(--text-dim);
       font-weight: normal;
       margin-left: 6px;
     }
@@ -41,12 +41,12 @@
     .preset-label {
       font-size: 0.78rem;
       font-weight: 600;
-      color: #8da396;
+      color: var(--text-muted);
     }
     .chip {
-      background: #182e21;
-      border: 1px solid #294c37;
-      color: #e8f5ee;
+      background: var(--surface-input);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
       padding: 5px 12px;
       font-size: 0.75rem;
       font-weight: 600;
@@ -55,9 +55,9 @@
       transition: all 0.15s ease;
     }
     .chip:hover {
-      background: #254632;
-      border-color: #2ecc71;
-      color: #2ecc71;
+      background: var(--border-color);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
     }
 
     #reading-form {
@@ -88,7 +88,7 @@
     .field-label {
       font-size: 0.82rem;
       font-weight: 600;
-      color: #e8f5ee;
+      color: var(--text-main);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -101,9 +101,9 @@
       transition: all 0.2s ease;
     }
     .tag-normal {
-      color: #2ecc71;
-      background: rgba(46, 204, 113, 0.15);
-      border: 1px solid rgba(46, 204, 113, 0.3);
+      color: var(--accent-green);
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
     }
     .tag-alert {
       color: #ff6b6b;
@@ -112,14 +112,14 @@
     }
     .field-label span.hint {
       font-weight: normal;
-      color: #728c7d;
+      color: var(--text-dim);
       font-size: 0.75rem;
     }
     .custom-input {
       display: flex;
       align-items: center;
-      background: #182e21;
-      border: 1.5px solid #294c37;
+      background: var(--surface-input);
+      border: 1.5px solid var(--border-subtle);
       border-radius: 8px;
       padding: 7px 12px;
       width: 100%;
@@ -127,8 +127,8 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .custom-input:focus-within {
-      border-color: #2ecc71;
-      background: #132219;
+      border-color: var(--accent-green);
+      background: var(--card-bg);
       box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.18);
     }
     .custom-input input {
@@ -138,14 +138,14 @@
       outline: none !important;
       font-size: 0.95rem !important;
       font-weight: 600 !important;
-      color: #e8f5ee !important;
+      color: var(--text-main) !important;
       padding: 0 !important;
       margin: 0 !important;
     }
     .input-badge {
       font-size: 0.8rem;
       font-weight: 700;
-      color: #728c7d;
+      color: var(--text-dim);
       user-select: none;
     }
     .badge-left { margin-right: 8px; }
@@ -160,7 +160,7 @@
     }
     .btn-submit {
       flex: 3 !important;
-      background: #1b7348 !important;
+      background: var(--accent-green) !important;
       color: #ffffff !important;
       border: none !important;
       border-radius: 8px !important;
@@ -175,13 +175,13 @@
       transition: background-color 0.2s;
     }
     .btn-submit:hover {
-      background: #2ecc71 !important;
+      background: var(--accent-green-hover) !important;
     }
     .btn-reset {
       flex: 1 !important;
-      background: #182e21 !important;
-      color: #e8f5ee !important;
-      border: 1px solid #294c37 !important;
+      background: var(--surface-input) !important;
+      color: var(--text-main) !important;
+      border: 1px solid var(--border-subtle) !important;
       border-radius: 8px !important;
       padding: 12px !important;
       font-size: 0.92rem !important;
@@ -195,8 +195,7 @@
       transition: all 0.15s ease;
     }
     .btn-reset:hover {
-      background: #254632 !important;
-      border-color: #3d684e !important;
+      background: var(--border-color) !important;
     }
 
     .qr-actions {
@@ -219,12 +218,10 @@
       text-decoration: none;
       transition: background-color 0.2s ease;
     }
-    .btn-download:hover {
-      background-color: #1a4f74;
-    }
+    .btn-download:hover { background-color: #1a4f74; }
     .btn-download:disabled {
-      background-color: #314438;
-      color: #63776b;
+      background-color: #314438 !important;
+      color: #63776b !important;
       cursor: not-allowed;
     }
 
@@ -239,16 +236,16 @@
     .qr-placeholder {
       width: 100%;
       height: 100%;
-      border: 2px dashed #294c37;
+      border: 2px dashed var(--border-subtle);
       border-radius: 10px;
-      background-color: #182e21;
+      background-color: var(--surface-input);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 10px;
-      color: #728c7d;
+      color: var(--text-dim);
     }
     .qr-placeholder-icon {
       font-size: 26px;
@@ -267,14 +264,14 @@
     }
     .qr-placeholder-sub {
       font-size: 0.65rem;
-      color: #728c7d;
+      color: var(--text-dim);
       margin-top: 3px;
     }
     #qr-image {
       width: 150px;
       height: 150px;
       border-radius: 8px;
-      border: 1px solid #1f3d2b;
+      border: 1px solid var(--border-color);
       object-fit: contain;
       background: #ffffff;
       padding: 4px;
@@ -282,11 +279,11 @@
 
     /* History Table Styles */
     .history-card {
-      background: #132219;
+      background: var(--card-bg);
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-      border: 1px solid #1f3d2b;
+      box-shadow: 0 4px 18px var(--shadow-color);
+      border: 1px solid var(--border-color);
       margin-top: 24px;
       margin-bottom: 24px;
     }
@@ -309,17 +306,17 @@
       text-align: left;
     }
     .history-table th {
-      background: #182e21;
-      color: #8da396;
+      background: var(--surface-input);
+      color: var(--text-muted);
       font-weight: 600;
       padding: 10px 12px;
-      border-bottom: 2px solid #1f3d2b;
+      border-bottom: 2px solid var(--border-color);
       white-space: nowrap;
     }
     .history-table td {
       padding: 11px 12px;
-      border-bottom: 1px solid #182e21;
-      color: #e8f5ee;
+      border-bottom: 1px solid var(--surface-input);
+      color: var(--text-main);
       white-space: nowrap;
       vertical-align: middle;
     }
@@ -331,9 +328,9 @@
       border-radius: 4px;
     }
     .badge-pass {
-      background: rgba(46, 204, 113, 0.15);
-      color: #2ecc71;
-      border: 1px solid rgba(46, 204, 113, 0.3);
+      background: var(--badge-bg);
+      color: var(--accent-green);
+      border: 1px solid var(--badge-border);
     }
     .badge-fail {
       background: rgba(231, 76, 60, 0.15);
@@ -344,19 +341,19 @@
       padding: 4px 9px;
       font-size: 0.76rem;
       font-weight: 600;
-      color: #2ecc71;
-      background: rgba(46, 204, 113, 0.15);
-      border: 1px solid rgba(46, 204, 113, 0.3);
+      color: var(--accent-green);
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
     .btn-row-pdf:hover {
-      background: #1b7348;
+      background: var(--accent-green);
       color: #ffffff;
     }
     .btn-table-pdf {
-      background: #1b7348;
+      background: var(--accent-green);
       color: #ffffff;
       border: none;
       padding: 6px 12px;
@@ -370,26 +367,34 @@
       transition: background 0.15s;
     }
     .btn-table-pdf:hover {
-      background: #2ecc71;
+      background: var(--accent-green-hover);
     }
   </style>
 </head>
 <body>
   <main class="page">
     <header class="hero">
-      <div class="logo">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 2h8"></path>
-          <path d="M9 2v3h6V2"></path>
-          <path d="M7 8l-1 13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1l-1-13H7z"></path>
-          <path d="M6 13h12"></path>
-        </svg>
+      <div class="hero-left">
+        <div class="logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2h8"></path>
+            <path d="M9 2v3h6V2"></path>
+            <path d="M7 8l-1 13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1l-1-13H7z"></path>
+            <path d="M6 13h12"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>MilkGuard</h1>
+          <p>Smart Milk Quality Screening System</p>
+        </div>
       </div>
-      <div>
-        <h1>MilkGuard</h1>
-        <p>Smart Milk Quality Screening System</p>
+
+      <div class="header-controls">
+        <button type="button" class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
+          🌙 Dark Mode
+        </button>
+        <span class="live-dot">● LIVE</span>
       </div>
-      <span class="live-dot">● LIVE</span>
     </header>
 
     <section class="intro">
@@ -423,13 +428,13 @@
     <section class="card reading-card">
       <div class="section-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div>
-          <span class="eyebrow" style="color:#2ecc71; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Live Sensor Data</span>
-          <h2 style="font-size:1.4rem; font-weight:700; color:#e8f5ee; margin:2px 0 0 0;">Milk Readings</h2>
+          <span class="eyebrow">Live Sensor Data</span>
+          <h2 style="font-size:1.4rem; font-weight:700; margin:2px 0 0 0;">Milk Readings</h2>
         </div>
-        <span class="auto" style="background:#182e21; color:#2ecc71; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px; border:1px solid #1f3d2b;">Auto refresh: 2 min</span>
+        <span class="auto">Auto refresh: 2 min</span>
       </div>
       
-      <p class="small" style="color:#8da396; font-size:0.85rem; margin-bottom:14px;">
+      <p class="small" style="margin-bottom:14px;">
         ESP32 readings appear automatically. Enter parameters manually or use quick test presets:
       </p>
 
@@ -508,15 +513,15 @@
 
     <section id="qr-card" class="card" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <span class="eyebrow" style="color:#2ecc71;">VERIFIED CERTIFICATE</span>
-        <h2 style="color:#e8f5ee; margin: 2px 0 4px 0;">Save or Share QR</h2>
-        <p id="qr-sample" class="small" style="color: #8da396;">Run a test to generate an audit report & QR certificate.</p>
+        <span class="eyebrow">VERIFIED CERTIFICATE</span>
+        <h2 style="margin: 2px 0 4px 0;">Save or Share QR</h2>
+        <p id="qr-sample" class="small">Run a test to generate an audit report & QR certificate.</p>
         <div class="qr-actions">
-          <a id="report-link" target="_blank" rel="noopener" style="display: none; color: #2ecc71;">Open individual report →</a>
+          <a id="report-link" target="_blank" rel="noopener" style="display: none; color: var(--accent-green);">Open individual report →</a>
           <button type="button" id="download-qr-btn" class="btn-download" onclick="downloadQRCode()" disabled>
             ⬇ Download QR Code
           </button>
-          <button type="button" id="print-cert-btn" class="btn-download" onclick="generatePDFCertificate()" disabled style="background-color: #1b7348;">
+          <button type="button" id="print-cert-btn" class="btn-download" onclick="generatePDFCertificate()" disabled style="background-color: var(--accent-green);">
             📄 Print / Save PDF
           </button>
         </div>
@@ -536,14 +541,14 @@
     <section class="card history-card">
       <div class="history-header">
         <div>
-          <span class="eyebrow" style="color:#2ecc71; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Audit Trail</span>
-          <h2 style="font-size:1.3rem; font-weight:700; color:#e8f5ee; margin:2px 0 0 0;">Recent Tests</h2>
+          <span class="eyebrow">Audit Trail</span>
+          <h2 style="font-size:1.3rem; font-weight:700; margin:2px 0 0 0;">Recent Tests</h2>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
           <button type="button" class="btn-table-pdf" onclick="generateAuditLogPDF()">
             📄 Download Table PDF
           </button>
-          <span class="auto" style="background:#182e21; color:#2ecc71; font-size:0.75rem; font-weight:600; padding:5px 10px; border-radius:6px; border:1px solid #1f3d2b;">Live Records</span>
+          <span class="auto">Live Records</span>
         </div>
       </div>
 
@@ -563,7 +568,7 @@
           </thead>
           <tbody id="history-tbody">
             <tr id="empty-history-row">
-              <td colspan="8" style="text-align: center; color: #728c7d; padding: 20px;">No tests recorded yet. Run a sample test above!</td>
+              <td colspan="8" style="text-align: center; color: var(--text-dim); padding: 20px;">No tests recorded yet. Run a sample test above!</td>
             </tr>
           </tbody>
         </table>
@@ -576,6 +581,30 @@
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
+    // Theme Switcher Logic
+    function initTheme() {
+      const savedTheme = localStorage.getItem("milkguard_theme") || "dark";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      updateThemeBtn(savedTheme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme") || "dark";
+      const target = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", target);
+      localStorage.setItem("milkguard_theme", target);
+      updateThemeBtn(target);
+    }
+
+    function updateThemeBtn(theme) {
+      const btn = document.getElementById("theme-btn");
+      if (btn) {
+        btn.innerHTML = theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+      }
+    }
+
+    initTheme();
+
     function resetRangeTags() {
       const phTag = document.getElementById("ph-tag");
       const tdsTag = document.getElementById("tds-tag");
