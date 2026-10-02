@@ -49,7 +49,6 @@ form.addEventListener('submit', async (event) => {
     time: testTimeStr
   });
 
-  // Table me real-time naya test record add karo jisme per-row PDF action button ho
   appendRecentTestRow({
     sample_id: data.sample_id,
     ph: data.ph,
