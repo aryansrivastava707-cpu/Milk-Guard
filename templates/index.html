@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,17 +7,17 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
     .reading-card {
-      background: #ffffff;
+      background: #132219;
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
-      border: 1px solid #eef2ef;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+      border: 1px solid #1f3d2b;
       margin-bottom: 24px;
     }
     .manual-panel summary {
       cursor: pointer;
       font-weight: 600;
-      color: #1e6b47;
+      color: #2ecc71;
       margin-bottom: 16px;
       user-select: none;
       outline: none;
@@ -26,7 +26,7 @@
       gap: 6px;
     }
     .manual-panel summary small {
-      color: #7b8a82;
+      color: #728c7d;
       font-weight: normal;
       margin-left: 6px;
     }
@@ -41,12 +41,12 @@
     .preset-label {
       font-size: 0.78rem;
       font-weight: 600;
-      color: #6a7c72;
+      color: #8da396;
     }
     .chip {
-      background: #f1f5f3;
-      border: 1px solid #dae5df;
-      color: #213328;
+      background: #182e21;
+      border: 1px solid #294c37;
+      color: #e8f5ee;
       padding: 5px 12px;
       font-size: 0.75rem;
       font-weight: 600;
@@ -55,9 +55,9 @@
       transition: all 0.15s ease;
     }
     .chip:hover {
-      background: #e2ede7;
-      border-color: #bcd5c7;
-      color: #1e6b47;
+      background: #254632;
+      border-color: #2ecc71;
+      color: #2ecc71;
     }
 
     #reading-form {
@@ -88,7 +88,7 @@
     .field-label {
       font-size: 0.82rem;
       font-weight: 600;
-      color: #3b4e43;
+      color: #e8f5ee;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -101,23 +101,25 @@
       transition: all 0.2s ease;
     }
     .tag-normal {
-      color: #27794f;
-      background: #ebfbee;
+      color: #2ecc71;
+      background: rgba(46, 204, 113, 0.15);
+      border: 1px solid rgba(46, 204, 113, 0.3);
     }
     .tag-alert {
-      color: #b7094c;
-      background: #ffe3e3;
+      color: #ff6b6b;
+      background: rgba(231, 76, 60, 0.15);
+      border: 1px solid rgba(231, 76, 60, 0.3);
     }
     .field-label span.hint {
       font-weight: normal;
-      color: #8c9e94;
+      color: #728c7d;
       font-size: 0.75rem;
     }
     .custom-input {
       display: flex;
       align-items: center;
-      background: #fafcfb;
-      border: 1.5px solid #dce5df;
+      background: #182e21;
+      border: 1.5px solid #294c37;
       border-radius: 8px;
       padding: 7px 12px;
       width: 100%;
@@ -125,9 +127,9 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .custom-input:focus-within {
-      border-color: #2b7a54;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(43, 122, 84, 0.12);
+      border-color: #2ecc71;
+      background: #132219;
+      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.18);
     }
     .custom-input input {
       border: none !important;
@@ -136,14 +138,14 @@
       outline: none !important;
       font-size: 0.95rem !important;
       font-weight: 600 !important;
-      color: #213328 !important;
+      color: #e8f5ee !important;
       padding: 0 !important;
       margin: 0 !important;
     }
     .input-badge {
       font-size: 0.8rem;
       font-weight: 700;
-      color: #5c7265;
+      color: #728c7d;
       user-select: none;
     }
     .badge-left { margin-right: 8px; }
@@ -158,7 +160,7 @@
     }
     .btn-submit {
       flex: 3 !important;
-      background: #1e6b47 !important;
+      background: #1b7348 !important;
       color: #ffffff !important;
       border: none !important;
       border-radius: 8px !important;
@@ -173,13 +175,13 @@
       transition: background-color 0.2s;
     }
     .btn-submit:hover {
-      background: #165436 !important;
+      background: #2ecc71 !important;
     }
     .btn-reset {
       flex: 1 !important;
-      background: #f1f5f3 !important;
-      color: #495e52 !important;
-      border: 1px solid #d2ded7 !important;
+      background: #182e21 !important;
+      color: #e8f5ee !important;
+      border: 1px solid #294c37 !important;
       border-radius: 8px !important;
       padding: 12px !important;
       font-size: 0.92rem !important;
@@ -193,9 +195,8 @@
       transition: all 0.15s ease;
     }
     .btn-reset:hover {
-      background: #e2ede7 !important;
-      border-color: #bccdc3 !important;
-      color: #1f3629 !important;
+      background: #254632 !important;
+      border-color: #3d684e !important;
     }
 
     .qr-actions {
@@ -211,7 +212,7 @@
       font-size: 0.85rem;
       font-weight: 600;
       color: #ffffff;
-      background-color: #1a4f7c;
+      background-color: #216594;
       border: none;
       border-radius: 6px;
       cursor: pointer;
@@ -219,10 +220,11 @@
       transition: background-color 0.2s ease;
     }
     .btn-download:hover {
-      background-color: #123655;
+      background-color: #1a4f74;
     }
     .btn-download:disabled {
-      background-color: #b0bec5;
+      background-color: #314438;
+      color: #63776b;
       cursor: not-allowed;
     }
 
@@ -237,16 +239,16 @@
     .qr-placeholder {
       width: 100%;
       height: 100%;
-      border: 2px dashed #b8c7be;
+      border: 2px dashed #294c37;
       border-radius: 10px;
-      background-color: #f7faf8;
+      background-color: #182e21;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 10px;
-      color: #5c7466;
+      color: #728c7d;
     }
     .qr-placeholder-icon {
       font-size: 26px;
@@ -265,24 +267,26 @@
     }
     .qr-placeholder-sub {
       font-size: 0.65rem;
-      color: #8da396;
+      color: #728c7d;
       margin-top: 3px;
     }
     #qr-image {
       width: 150px;
       height: 150px;
       border-radius: 8px;
-      border: 1px solid #dcdfe3;
+      border: 1px solid #1f3d2b;
       object-fit: contain;
+      background: #ffffff;
+      padding: 4px;
     }
 
     /* History Table Styles */
     .history-card {
-      background: #ffffff;
+      background: #132219;
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
-      border: 1px solid #eef2ef;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+      border: 1px solid #1f3d2b;
       margin-top: 24px;
       margin-bottom: 24px;
     }
@@ -305,17 +309,17 @@
       text-align: left;
     }
     .history-table th {
-      background: #f8fafc;
-      color: #475569;
+      background: #182e21;
+      color: #8da396;
       font-weight: 600;
       padding: 10px 12px;
-      border-bottom: 2px solid #e2e8f0;
+      border-bottom: 2px solid #1f3d2b;
       white-space: nowrap;
     }
     .history-table td {
       padding: 11px 12px;
-      border-bottom: 1px solid #f1f5f9;
-      color: #1e293b;
+      border-bottom: 1px solid #182e21;
+      color: #e8f5ee;
       white-space: nowrap;
       vertical-align: middle;
     }
@@ -327,30 +331,32 @@
       border-radius: 4px;
     }
     .badge-pass {
-      background: #ebfbee;
-      color: #1e6b47;
+      background: rgba(46, 204, 113, 0.15);
+      color: #2ecc71;
+      border: 1px solid rgba(46, 204, 113, 0.3);
     }
     .badge-fail {
-      background: #ffe3e3;
-      color: #d90429;
+      background: rgba(231, 76, 60, 0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(231, 76, 60, 0.3);
     }
     .btn-row-pdf {
       padding: 4px 9px;
       font-size: 0.76rem;
       font-weight: 600;
-      color: #1e6b47;
-      background: #ebfbee;
-      border: 1px solid #b7dfc9;
+      color: #2ecc71;
+      background: rgba(46, 204, 113, 0.15);
+      border: 1px solid rgba(46, 204, 113, 0.3);
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
     .btn-row-pdf:hover {
-      background: #1e6b47;
+      background: #1b7348;
       color: #ffffff;
     }
     .btn-table-pdf {
-      background: #1e6b47;
+      background: #1b7348;
       color: #ffffff;
       border: none;
       padding: 6px 12px;
@@ -364,14 +370,14 @@
       transition: background 0.15s;
     }
     .btn-table-pdf:hover {
-      background: #165436;
+      background: #2ecc71;
     }
   </style>
 </head>
 <body>
   <main class="page">
     <header class="hero">
-      <div class="logo" style="display:flex; align-items:center; justify-content:center; background:#1e6b47; width:46px; height:46px; border-radius:12px; box-shadow:0 2px 8px rgba(30,107,71,0.25);">
+      <div class="logo">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M8 2h8"></path>
           <path d="M9 2v3h6V2"></path>
@@ -379,7 +385,10 @@
           <path d="M6 13h12"></path>
         </svg>
       </div>
-      <div><h1>MilkGuard</h1><p>Smart Milk Quality Screening System</p></div>
+      <div>
+        <h1>MilkGuard</h1>
+        <p>Smart Milk Quality Screening System</p>
+      </div>
       <span class="live-dot">● LIVE</span>
     </header>
 
@@ -414,13 +423,13 @@
     <section class="card reading-card">
       <div class="section-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div>
-          <span class="eyebrow" style="color:#2b7a54; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Live Sensor Data</span>
-          <h2 style="font-size:1.4rem; font-weight:700; color:#1a2b21; margin:2px 0 0 0;">Milk Readings</h2>
+          <span class="eyebrow" style="color:#2ecc71; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Live Sensor Data</span>
+          <h2 style="font-size:1.4rem; font-weight:700; color:#e8f5ee; margin:2px 0 0 0;">Milk Readings</h2>
         </div>
-        <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px;">Auto refresh: 2 min</span>
+        <span class="auto" style="background:#182e21; color:#2ecc71; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:6px; border:1px solid #1f3d2b;">Auto refresh: 2 min</span>
       </div>
       
-      <p class="small" style="color:#6d7f74; font-size:0.85rem; margin-bottom:14px;">
+      <p class="small" style="color:#8da396; font-size:0.85rem; margin-bottom:14px;">
         ESP32 readings appear automatically. Enter parameters manually or use quick test presets:
       </p>
 
@@ -442,8 +451,8 @@
             
             <div class="field-group">
               <label class="field-label" for="sample-id">
-                <span>Sample ID <span style="color: #d90429; font-weight: bold;">*</span></span>
-                <span class="hint" style="color: #d90429; font-weight: 600;">Required</span>
+                <span>Sample ID <span style="color: #ff6b6b; font-weight: bold;">*</span></span>
+                <span class="hint" style="color: #ff6b6b; font-weight: 600;">Required</span>
               </label>
               <div class="custom-input">
                 <input id="sample-id" type="text" maxlength="40" placeholder="e.g. MG-001" required>
@@ -497,17 +506,17 @@
       </details>
     </section>
 
-    <section id="qr-card" class="card qr-card" style="display: flex; justify-content: space-between; align-items: center;">
+    <section id="qr-card" class="card" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <span class="eyebrow">VERIFIED CERTIFICATE</span>
-        <h2>Save or Share QR</h2>
-        <p id="qr-sample" class="small" style="color: #6a7c72;">Run a test to generate an audit report & QR certificate.</p>
+        <span class="eyebrow" style="color:#2ecc71;">VERIFIED CERTIFICATE</span>
+        <h2 style="color:#e8f5ee; margin: 2px 0 4px 0;">Save or Share QR</h2>
+        <p id="qr-sample" class="small" style="color: #8da396;">Run a test to generate an audit report & QR certificate.</p>
         <div class="qr-actions">
-          <a id="report-link" target="_blank" rel="noopener" style="display: none;">Open individual report →</a>
+          <a id="report-link" target="_blank" rel="noopener" style="display: none; color: #2ecc71;">Open individual report →</a>
           <button type="button" id="download-qr-btn" class="btn-download" onclick="downloadQRCode()" disabled>
             ⬇ Download QR Code
           </button>
-          <button type="button" id="print-cert-btn" class="btn-download" onclick="generatePDFCertificate()" disabled style="background-color: #1e6b47;">
+          <button type="button" id="print-cert-btn" class="btn-download" onclick="generatePDFCertificate()" disabled style="background-color: #1b7348;">
             📄 Print / Save PDF
           </button>
         </div>
@@ -527,14 +536,14 @@
     <section class="card history-card">
       <div class="history-header">
         <div>
-          <span class="eyebrow" style="color:#2b7a54; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Audit Trail</span>
-          <h2 style="font-size:1.3rem; font-weight:700; color:#1a2b21; margin:2px 0 0 0;">Recent Tests</h2>
+          <span class="eyebrow" style="color:#2ecc71; font-size:0.75rem; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;">Audit Trail</span>
+          <h2 style="font-size:1.3rem; font-weight:700; color:#e8f5ee; margin:2px 0 0 0;">Recent Tests</h2>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
           <button type="button" class="btn-table-pdf" onclick="generateAuditLogPDF()">
             📄 Download Table PDF
           </button>
-          <span class="auto" style="background:#f0f5f2; color:#3e664e; font-size:0.75rem; font-weight:600; padding:5px 10px; border-radius:6px;">Live Records</span>
+          <span class="auto" style="background:#182e21; color:#2ecc71; font-size:0.75rem; font-weight:600; padding:5px 10px; border-radius:6px; border:1px solid #1f3d2b;">Live Records</span>
         </div>
       </div>
 
@@ -554,7 +563,7 @@
           </thead>
           <tbody id="history-tbody">
             <tr id="empty-history-row">
-              <td colspan="8" style="text-align: center; color: #94a3b8; padding: 20px;">No tests recorded yet. Run a sample test above!</td>
+              <td colspan="8" style="text-align: center; color: #728c7d; padding: 20px;">No tests recorded yet. Run a sample test above!</td>
             </tr>
           </tbody>
         </table>
@@ -876,7 +885,6 @@
         return;
       }
 
-      // Clone table and remove the Action column for clean printing
       const rows = tbody.querySelectorAll("tr");
       let tableRowsHtml = "";
       rows.forEach(tr => {
