@@ -14,8 +14,8 @@
 #include <DallasTemperature.h>
 
 // Replace these locally; do not upload real Wi-Fi credentials to a public repo.
-const char* WIFI_SSID = "srivastava___aryan";
-const char* WIFI_PASSWORD = "Anujashish";
+const char* WIFI_SSID = "YOUR_WIFI_NAME";
+const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
 const char* API_URL = "https://milk-guard.onrender.com/predict";
 
 constexpr int PH_PIN = 34;       // ADC input only
