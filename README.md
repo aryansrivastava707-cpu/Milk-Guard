@@ -1,26 +1,32 @@
-# MilkGuard – Smart Milk Quality & Adulteration Detection System
+# MilkGuard – Milk Quality Screening Prototype
 
 MilkGuard is a beginner-friendly B.Tech mini-project. It accepts pH, TDS (or a conductivity-derived TDS value), and temperature readings, then uses **one machine-learning classification model** to display a screening result: **NORMAL** or **SUSPICIOUS**.
+
+**Live demo:** https://milk-guard.onrender.com (free hosting, the first load can take up to a minute)
+
+**Tech:** Python, Flask, scikit-learn (Random Forest), HTML/CSS/JavaScript
 
 > Important: This is a classroom screening prototype. It cannot prove that a named adulterant is present, measure its amount, or replace a food-testing laboratory. Its ML output is only an indication based on the three entered readings.
 
 ## Project structure
 
 ```
-milkguard/
-├── app.py                         # Flask routes and prediction API
-├── train_model.py                 # creates demo data and trains ONE model
+Milk-Guard/
+├── app.py                         # Flask routes and prediction API
+├── train_model.py                 # creates demo data and trains ONE model
 ├── requirements.txt
+├── render.yaml                    # Render deployment settings
+├── supabase_setup.sql             # database table setup
 ├── README.md
 ├── data/
-│   ├── demo_samples.csv            # small set of values for testing
-│   └── synthetic_milk_data.csv     # made after training; documented demo data
+│   ├── demo_samples.csv            # small set of values for testing
+│   └── synthetic_milk_data.csv     # made after training; documented demo data
 ├── model/
-│   └── milkguard_model.joblib      # saved after training
-├── templates/index.html            # website page
+│   └── milkguard_model.joblib      # saved after training
+├── templates/index.html            # website page
 ├── static/style.css
 ├── static/script.js
-└── esp32/esp32_example.ino         # optional future sensor connection
+└── esp32/esp32_example.ino         # optional future sensor connection
 ```
 
 ## How the demo dataset works
@@ -30,14 +36,14 @@ No real, labelled milk measurements were supplied for this project. Therefore `t
 The model is a `RandomForestClassifier`. It is one model, trained with three input columns:
 
 ```
-pH + TDS + temperature  →  one classifier  →  NORMAL / SUSPICIOUS
+pH + TDS + temperature  →  one classifier  →  NORMAL / SUSPICIOUS
 ```
 
 The printed accuracy is only performance against the artificial held-out data, so it must not be used as a real-world accuracy claim.
 
 ## Setup and run (Windows)
 
-Open PowerShell inside the `milkguard` folder and run:
+Open PowerShell inside the `Milk-Guard` folder and run:
 
 ```powershell
 python -m venv .venv
