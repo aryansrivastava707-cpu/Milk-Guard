@@ -1,63 +1,99 @@
-# MilkGuard – Milk Quality Screening Prototype
+# 🥛 MilkGuard — Milk Quality Screening Prototype
 
-MilkGuard is a beginner-friendly B.Tech mini-project. It accepts pH, TDS (or a conductivity-derived TDS value), and temperature readings, then displays a screening result: **NORMAL** or **SUSPICIOUS**. The result currently comes from rule-based threshold checks on the three readings. A Random Forest model is trained in `train_model.py` on synthetic demo data, but it is not yet used by the `/predict` endpoint.
+> A beginner-friendly B.Tech mini-project that screens pH, TDS, and temperature readings and reports **NORMAL** or **SUSPICIOUS**.
 
-**Live demo:** https://milk-guard.onrender.com (free hosting, the first load can take up to a minute)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web%20App-000000.svg?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![Frontend](https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JavaScript-E34F26.svg?logo=html5&logoColor=white)](https://developer.mozilla.org/)
+[![Database](https://img.shields.io/badge/Database-Supabase-3FCF8E.svg?logo=supabase&logoColor=white)](https://supabase.com/)
 
-**Tech:** Python, Flask, Supabase, scikit-learn (training script), HTML/CSS/JavaScript
+---
 
-> Important: This is a classroom screening prototype. It cannot prove that a named adulterant is present, measure its amount, or replace a food-testing laboratory. Its output is only an indication based on the three entered readings.
+## 📖 Table of Contents
 
-## Project structure
+- [Overview](#-overview)
+- [How the Screening Works](#-how-the-screening-works)
+- [Features](#-features)
+- [Technology and Architecture](#-technology-and-architecture)
+- [Project Structure](#-project-structure)
+- [Quick Start](#-quick-start)
+- [Supabase Setup](#-supabase-setup-optional)
+- [API and ESP32 Example](#-api-and-esp32-example)
+- [Training Script](#-training-script-demo-only)
+- [Limitations and Safe Use](#-limitations-and-safe-use)
+- [Working with Real Data](#-working-with-real-data)
 
-```
+## 🎯 Overview
+
+MilkGuard accepts pH, total dissolved solids (TDS), and temperature readings, then displays a rule-based screening result. Each test can be saved to a local CSV history and, when configured, to Supabase. A report page is available for each test.
+
+**Live demo:** [milk-guard.onrender.com](https://milk-guard.onrender.com)  
+The free hosted service may take up to a minute to respond on its first visit.
+
+> **Classroom prototype only.** MilkGuard does not identify a specific adulterant, measure adulterant concentration, or replace laboratory testing. Its thresholds are demonstration settings, not certified food-safety limits.
+
+## 🔎 How the Screening Works
+
+The `/predict` endpoint checks submitted readings against the current project thresholds:
+
+| Reading | Current screening range |
+|---|---:|
+| pH | 6.45–6.85 |
+| TDS | 220–580 ppm |
+| Temperature | Up to 30 °C |
+
+The app calculates a rule-based risk score. A score below **45%** is shown as **NORMAL**; a score of **45% or higher** is shown as **SUSPICIOUS**. The page also reports which readings fell outside the configured ranges.
+
+These checks are simple screening rules. They do not establish whether milk is safe, authentic, or adulterated.
+
+## ✨ Features
+
+- Enter pH, TDS, and temperature readings in a browser interface.
+- Receive a **NORMAL** or **SUSPICIOUS** result with a risk percentage and explanation.
+- Review the readings that triggered the result.
+- Save test history locally and optionally to Supabase.
+- Open a report page at `/report/<test_id>` for an individual test.
+- Train a separate Random Forest demo model using generated synthetic readings.
+- Try an optional ESP32 example that posts sensor readings to the Flask API.
+
+## 🧱 Technology and Architecture
+
+- **Flask / Python:** web routes, threshold checks, and history handling.
+- **HTML, CSS, and JavaScript:** browser form and result display.
+- **Supabase:** optional hosted storage for the `milk_tests` table.
+- **scikit-learn:** used by the separate Random Forest training script.
+- **ESP32 sketch:** optional example for sending readings over Wi-Fi.
+
+The live `/predict` route currently uses the rule-based checks. The Random Forest model produced by `train_model.py` is **not connected** to that endpoint.
+
+## 🗂️ Project Structure
+
+```text
 Milk-Guard/
-├── app.py                         # Flask routes, rule-based screening, history saving
-├── train_model.py                 # creates demo data and trains a Random Forest (not used by /predict yet)
-├── requirements.txt
-├── render.yaml                    # Render deployment settings
-├── supabase_setup.sql             # database table setup
-├── README.md
+├── app.py                       # Flask routes, rule-based screening, history saving
+├── train_model.py               # Generates demo data and trains a Random Forest
+├── requirements.txt             # Python dependencies
+├── render.yaml                  # Render deployment configuration
+├── supabase_setup.sql            # Supabase table setup
 ├── data/
-│   ├── demo_samples.csv            # small set of values for testing
-│   └── synthetic_milk_data.csv     # made after training; documented demo data
+│   ├── demo_samples.csv          # Example readings for trying the form
+│   └── synthetic_milk_data.csv   # Generated by the training script
 ├── model/
-│   └── milkguard_model.joblib      # saved after training
-├── templates/index.html            # website page
-├── static/style.css
-├── static/script.js
-└── esp32/esp32_example.ino         # optional future sensor connection
+│   └── milkguard_model.joblib    # Generated model artifact
+├── templates/
+│   └── index.html                # Web page template
+├── static/
+│   ├── style.css                 # Page styles
+│   └── script.js                 # Browser interactions
+└── esp32/
+    └── esp32_example.ino         # Optional sensor/API example
 ```
 
-## How the screening works
+`synthetic_milk_data.csv` and `milkguard_model.joblib` are produced by training; they may not exist until the training script has been run.
 
-`/predict` compares the three readings with fixed dairy ranges and calculates a risk score:
+## 🚀 Quick Start
 
-- pH: 6.45 to 6.85
-- TDS: 220 to 580 ppm
-- Temperature: up to 30°C
-
-If the risk score is below 45%, the result is NORMAL. Otherwise it is SUSPICIOUS, and the page lists the readings that were out of range. These ranges are simple project thresholds, not certified food-safety limits.
-
-Each test is saved to a CSV history and, if Supabase is configured, to a `milk_tests` table. Every test also gets a report page at `/report/<test_id>`.
-
-## The training script (demo only)
-
-Note: this section describes `train_model.py`. The live app currently uses the rule-based checks above, not this model.
-
-No real, labelled milk measurements were supplied for this project. Therefore `train_model.py` creates a synthetic/demo dataset of 300 readings with a fixed random seed. The labels are deliberately based on broad out-of-range patterns: unusually acidic pH, unusually high TDS, or unusual temperature. They are **not** evidence for any particular adulterant.
-
-The model is a `RandomForestClassifier`:
-
-```
-pH + TDS + temperature  →  one classifier  →  NORMAL / SUSPICIOUS
-```
-
-The printed accuracy is only performance against the artificial held-out data, so it must not be used as a real-world accuracy claim.
-
-## Setup and run (Windows)
-
-Open PowerShell inside the `Milk-Guard` folder and run:
+Requires Python and PowerShell on Windows. Open PowerShell in the `Milk-Guard` project folder:
 
 ```powershell
 python -m venv .venv
@@ -66,34 +102,69 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Then open `http://127.0.0.1:5000` in a browser. Use the readings in `data/demo_samples.csv` to test the form.
+Then open [http://127.0.0.1:5000](http://127.0.0.1:5000). Example readings are in `data/demo_samples.csv`.
 
-To also run the training script, use `python train_model.py`.
-
-Supabase is optional. To save tests there, run `supabase_setup.sql` in your Supabase project and set the `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` environment variables. Never put these keys in the code or commit them to GitHub.
-
-If PowerShell blocks virtual-environment activation, run this once in that PowerShell window:
+If PowerShell blocks virtual-environment activation, allow it only for the current PowerShell window:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-## API and ESP32 connection
+## 🗄️ Supabase Setup (Optional)
 
-The page itself calls this Flask endpoint. The ESP32 can call the same endpoint; the dashboard checks for a newest reading every five seconds and displays it automatically:
+1. Run `supabase_setup.sql` in your Supabase project to create the `milk_tests` table.
+2. Set the project URL and service key as environment variables in the shell used to run Flask:
 
-```text
+   ```powershell
+   $env:SUPABASE_URL = "your-project-url"
+   $env:SUPABASE_SERVICE_KEY = "your-service-key"
+   python app.py
+   ```
+
+Keep the service key private. Do not paste it into source code, README files, screenshots, or a public GitHub repository.
+
+## 🔌 API and ESP32 Example
+
+The browser sends readings to the Flask endpoint. The ESP32 example can send the same JSON shape:
+
+```http
 POST /predict
 Content-Type: application/json
+
 {"ph": 6.65, "tds": 310, "temperature": 27.0}
 ```
 
-The response includes the result label, the risk percentage and the reason. An optional ESP32 skeleton is at `esp32/esp32_example.ino`. Calibrate each sensor first, put both ESP32 and laptop on the same Wi-Fi network, change `serverUrl` to the laptop's local IP, and run Flask so that the network can reach it. Do not expose a local demo server to the public internet.
+The response includes the result label, risk percentage, and reason. Each saved test can be viewed at `/report/<test_id>`.
 
-## Improving the project with real data
+The sketch in `esp32/esp32_example.ino` is an optional example, not a verified sensor integration. Calibrate sensors, put the ESP32 and computer on the same trusted Wi-Fi network, and set `serverUrl` to the computer's local address. Do not expose the local Flask development server directly to the public internet.
 
-1. Collect readings from actual milk samples with calibrated sensors.
-2. Have samples independently checked by a lab or established reference test.
-3. Store `ph`, `tds`, `temperature`, and the independently determined `label` in a CSV.
-4. Update `train_model.py` to load that CSV instead of calling `make_demo_data()`.
-5. Retrain, keep a separate test set, connect the trained model to `/predict`, and report limitations honestly.
+## 🌲 Training Script (Demo Only)
+
+Run the separate model-training script with:
+
+```powershell
+python train_model.py
+```
+
+It generates 300 synthetic readings with a fixed random seed and trains a `RandomForestClassifier`. Demo labels are based on broad out-of-range patterns such as unusually acidic pH, high TDS, or unusual temperature. They do **not** represent confirmed adulterants.
+
+The training script's reported accuracy measures performance against an artificial held-out portion of that generated dataset. It is not evidence of real-world accuracy, and the trained model is not used by `/predict`.
+
+## ⚠️ Limitations and Safe Use
+
+- The thresholds are simple project settings, not validated food-safety standards.
+- pH, TDS, and temperature alone cannot prove milk quality or identify an adulterant.
+- Sensor calibration, temperature, sample handling, and measurement conditions can affect readings.
+- The synthetic training data does not represent real labelled milk samples.
+- The Random Forest is a demo training artifact; the live endpoint remains rule-based.
+- Supabase is optional; local and remote persistence depend on the application configuration.
+- This prototype is not a food-testing device and must not be used for health or commercial safety decisions.
+
+## 🧪 Working with Real Data
+
+1. Collect readings from real samples using calibrated sensors.
+2. Have each sample checked independently by a qualified laboratory or established reference method.
+3. Record `ph`, `tds`, `temperature`, and the independently verified label in a dataset.
+4. Update `train_model.py` to load that labelled dataset instead of generating demo labels.
+5. Keep a separate test set, evaluate on representative samples, and document remaining limitations.
+6. Only after validation, consider connecting a trained model to `/predict` and clearly report how it was evaluated.
